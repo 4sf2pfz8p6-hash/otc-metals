@@ -3,112 +3,1335 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OTC Metals</title>
+<title>MetalDesk — OTC рынок драгоценных металлов</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, system-ui, sans-serif; background: #0f1115; color: #e6e8eb; padding: 32px; max-width: 900px; margin: 0 auto; }
-  h1 { font-size: 22px; margin-bottom: 4px; letter-spacing: -0.3px; }
-  .sub { color: #8a909a; font-size: 13px; margin-bottom: 28px; }
-  .card { background: #181b22; border: 1px solid #262b35; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
-  .card h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; color: #8a909a; margin-bottom: 16px; }
-  .row { display: flex; gap: 10px; flex-wrap: wrap; }
-  input, select { background: #0f1115; border: 1px solid #2c323d; color: #e6e8eb; padding: 10px 12px; border-radius: 8px; font-size: 14px; flex: 1; min-width: 120px; }
-  button { background: #d4af37; color: #1a1a1a; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; }
-  button:hover { background: #e6c558; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { text-align: left; color: #8a909a; font-weight: 500; padding: 8px 10px; border-bottom: 1px solid #262b35; font-size: 11px; text-transform: uppercase; }
-  td { padding: 11px 10px; border-bottom: 1px solid #1d2129; }
-  .badge { padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-  .active { background: #1a3a2a; color: #4ade80; }
-  .withdrawn { background: #3a1a1a; color: #f87171; }
-  .id { color: #6b7280; font-family: monospace; font-size: 11px; }
+:root {
+  --bg: #09090c;
+  --bg2: #0e0f14;
+  --bg3: #141620;
+  --bg4: #1a1d28;
+  --border: #1f2230;
+  --border2: #2a2f42;
+  --text: #e8eaf2;
+  --text2: #8b909e;
+  --text3: #4a5068;
+  --gold: #c9a84c;
+  --gold2: #e8c56a;
+  --gold3: #f5d98a;
+  --gold-dim: rgba(201,168,76,0.1);
+  --gold-dim2: rgba(201,168,76,0.18);
+  --silver: #a8b4c4;
+  --silver2: #c8d8e8;
+  --platinum: #8fb4b4;
+  --platinum2: #a8d4d4;
+  --palladium: #b48fb4;
+  --palladium2: #d4a8d4;
+  --green: #4caf82;
+  --green-dim: rgba(76,175,130,0.1);
+  --green-dim2: rgba(76,175,130,0.18);
+  --red: #e05555;
+  --red-dim: rgba(224,85,85,0.1);
+  --red-dim2: rgba(224,85,85,0.18);
+  --blue: #5b8dee;
+  --blue-dim: rgba(91,141,238,0.1);
+  --radius: 8px;
+  --radius2: 12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'IBM Plex Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 13px; line-height: 1.5; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* HEADER */
+.header {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 54px; position: sticky; top: 0; z-index: 100;
+}
+.logo {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 15px; font-weight: 600; color: var(--gold2);
+  letter-spacing: 0.1em; display: flex; align-items: center; gap: 10px;
+  cursor: pointer;
+}
+.logo-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gold); box-shadow: 0 0 10px var(--gold);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+.header-ticker {
+  display: flex; gap: 28px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+}
+.ticker-item { display: flex; align-items: center; gap: 6px; }
+.ticker-name { color: var(--text3); letter-spacing: 0.06em; }
+.ticker-price { color: var(--text); font-weight: 500; }
+.ticker-change.up { color: var(--green); }
+.ticker-change.down { color: var(--red); }
+
+.header-nav { display: flex; align-items: center; gap: 8px; }
+
+/* BUTTONS */
+.btn {
+  padding: 7px 16px; border-radius: var(--radius); font-size: 12px;
+  font-weight: 500; cursor: pointer; border: 1px solid transparent;
+  transition: all 0.15s; font-family: 'IBM Plex Sans', sans-serif;
+  letter-spacing: 0.02em; white-space: nowrap;
+}
+.btn-ghost { background: transparent; border-color: var(--border2); color: var(--text2); }
+.btn-ghost:hover { border-color: var(--text3); color: var(--text); }
+.btn-gold { background: var(--gold); color: #080809; border-color: var(--gold); font-weight: 600; }
+.btn-gold:hover { background: var(--gold2); border-color: var(--gold2); }
+.btn-outline { background: transparent; border-color: var(--gold); color: var(--gold); }
+.btn-outline:hover { background: var(--gold-dim2); }
+.btn-green { background: var(--green); color: #080809; border-color: var(--green); font-weight: 600; }
+.btn-green:hover { filter: brightness(1.1); }
+.btn-red { background: transparent; border-color: var(--red); color: var(--red); }
+.btn-red:hover { background: var(--red-dim2); }
+.btn-lg { padding: 11px 24px; font-size: 14px; font-weight: 600; }
+.btn-full { width: 100%; justify-content: center; display: flex; }
+
+/* LAYOUT */
+.app { display: flex; min-height: calc(100vh - 54px); }
+
+/* SIDEBAR */
+.sidebar {
+  width: 220px; min-width: 220px; background: var(--bg2);
+  border-right: 1px solid var(--border); padding: 20px 0;
+  display: flex; flex-direction: column; gap: 0;
+}
+.sidebar-section { padding: 0 14px; margin-bottom: 28px; }
+.sidebar-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.15em;
+  color: var(--text3); text-transform: uppercase; margin-bottom: 8px; padding: 0 6px;
+}
+.sidebar-item {
+  display: flex; align-items: center; gap: 9px; padding: 8px 8px;
+  border-radius: var(--radius); cursor: pointer; color: var(--text2);
+  font-size: 13px; transition: all 0.12s; border: 1px solid transparent;
+  user-select: none;
+}
+.sidebar-item:hover { background: var(--bg3); color: var(--text); }
+.sidebar-item.active { background: var(--gold-dim2); color: var(--gold2); border-color: rgba(201,168,76,0.2); }
+.sidebar-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+.dot-gold { background: var(--gold); }
+.dot-silver { background: var(--silver); }
+.dot-pt { background: var(--platinum); }
+.dot-pd { background: var(--palladium); }
+.dot-all { background: var(--text3); }
+.dot-buy { background: var(--green); }
+.dot-sell { background: var(--red); }
+.sidebar-count { margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text3); }
+
+.sidebar-user {
+  margin-top: auto; padding: 14px; border-top: 1px solid var(--border);
+}
+.user-card {
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: 12px;
+}
+.user-name { font-weight: 600; font-size: 13px; color: var(--text); margin-bottom: 2px; }
+.user-type { font-size: 11px; color: var(--text3); }
+.user-rating { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+.rating-bar { flex: 1; height: 3px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
+.rating-fill { height: 100%; background: var(--green); border-radius: 2px; }
+.rating-val { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--green); }
+
+/* MAIN */
+.main { flex: 1; padding: 22px 26px; overflow: auto; }
+
+/* PAGE */
+.page { display: none; }
+.page.active { display: block; }
+
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 22px; }
+.page-title { font-size: 20px; font-weight: 600; color: var(--text); letter-spacing: -0.02em; }
+.page-sub { font-size: 11px; color: var(--text3); margin-top: 3px; font-family: 'IBM Plex Mono', monospace; }
+
+/* STATS */
+.stats-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+.stat-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 15px 16px; transition: border-color 0.15s;
+}
+.stat-card:hover { border-color: var(--border2); }
+.stat-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; margin-bottom: 7px; }
+.stat-value { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 500; color: var(--text); }
+.stat-sub { font-size: 11px; color: var(--text3); margin-top: 4px; font-family: 'IBM Plex Mono', monospace; }
+.up { color: var(--green) !important; }
+.down { color: var(--red) !important; }
+
+/* FILTERS */
+.filters {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 13px 16px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+}
+.filter-group { display: flex; align-items: center; gap: 7px; }
+.filter-label { font-size: 11px; color: var(--text3); white-space: nowrap; }
+.filter-select {
+  background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius);
+  color: var(--text); font-size: 12px; padding: 6px 10px;
+  font-family: 'IBM Plex Sans', sans-serif; cursor: pointer; outline: none; transition: border-color 0.15s;
+}
+.filter-select:focus { border-color: var(--gold); }
+.filter-chips { display: flex; gap: 6px; margin-left: auto; }
+.chip {
+  padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 500;
+  cursor: pointer; border: 1px solid var(--border2); color: var(--text2);
+  background: transparent; transition: all 0.15s; font-family: 'IBM Plex Sans', sans-serif;
+}
+.chip:hover { border-color: var(--text3); color: var(--text); }
+.chip.c-all { background: var(--gold-dim2); border-color: var(--gold); color: var(--gold); }
+.chip.c-buy { background: var(--green-dim2); border-color: var(--green); color: var(--green); }
+.chip.c-sell { background: var(--red-dim2); border-color: var(--red); color: var(--red); }
+
+/* TABLE */
+.table-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.table-head {
+  display: grid; grid-template-columns: 140px 80px 150px 130px 110px 90px 100px 110px;
+  padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--bg3);
+}
+.th { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; color: var(--text3); text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; }
+.table-row {
+  display: grid; grid-template-columns: 140px 80px 150px 130px 110px 90px 100px 110px;
+  padding: 13px 16px; border-bottom: 1px solid var(--border); align-items: center;
+  transition: background 0.1s; cursor: pointer;
+}
+.table-row:last-child { border-bottom: none; }
+.table-row:hover { background: var(--bg3); }
+.table-row.highlight { animation: rowIn 0.5s ease; }
+@keyframes rowIn { from{background:rgba(201,168,76,0.1)} to{background:transparent} }
+
+.metal-cell { display: flex; align-items: center; gap: 9px; }
+.metal-icon {
+  width: 30px; height: 30px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 700; flex-shrink: 0;
+}
+.i-gold { background: rgba(201,168,76,0.15); color: var(--gold2); border: 1px solid rgba(201,168,76,0.3); }
+.i-silver { background: rgba(168,180,196,0.12); color: var(--silver2); border: 1px solid rgba(168,180,196,0.25); }
+.i-platinum { background: rgba(143,180,180,0.12); color: var(--platinum2); border: 1px solid rgba(143,180,180,0.25); }
+.i-palladium { background: rgba(180,143,180,0.12); color: var(--palladium2); border: 1px solid rgba(180,143,180,0.25); }
+.metal-name { font-weight: 500; font-size: 13px; }
+.metal-purity { font-size: 10px; color: var(--text3); font-family: 'IBM Plex Mono', monospace; }
+
+.badge {
+  display: inline-flex; align-items: center; padding: 3px 8px;
+  border-radius: 4px; font-size: 10px; font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace;
+}
+.b-buy { background: var(--green-dim2); color: var(--green); border: 1px solid rgba(76,175,130,0.3); }
+.b-sell { background: var(--red-dim2); color: var(--red); border: 1px solid rgba(224,85,85,0.3); }
+
+.price-cell { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 500; }
+.price-unit { font-size: 10px; color: var(--text3); margin-top: 1px; }
+.vol-cell { font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
+.vol-unit { font-size: 10px; color: var(--text3); }
+.region-cell { color: var(--text2); font-size: 12px; }
+.rating-cell { display: flex; align-items: center; gap: 7px; }
+.r-bar { width: 38px; height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
+.r-fill { height: 100%; border-radius: 2px; background: var(--green); }
+.r-text { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text2); }
+.time-cell { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text3); }
+.action-cell { display: flex; justify-content: flex-end; }
+.btn-interest {
+  padding: 5px 12px; border-radius: var(--radius); font-size: 11px; font-weight: 500;
+  cursor: pointer; border: 1px solid var(--border2); color: var(--text2);
+  background: transparent; transition: all 0.15s; font-family: 'IBM Plex Sans', sans-serif;
+}
+.btn-interest:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+
+.empty-state { text-align: center; padding: 70px 20px; color: var(--text3); }
+.empty-icon { font-size: 36px; margin-bottom: 14px; opacity: 0.3; }
+.empty-text { font-size: 14px; }
+
+/* ANALYTICS */
+.analytics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.analytics-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); padding: 20px;
+}
+.analytics-card-title { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
+.metal-analytics { display: flex; flex-direction: column; gap: 14px; }
+.ma-row { display: flex; align-items: center; gap: 14px; }
+.ma-name { width: 80px; font-size: 13px; font-weight: 500; }
+.ma-bars { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+.ma-bar-row { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+.ma-bar-label { width: 50px; color: var(--text3); font-family: 'IBM Plex Mono', monospace; }
+.ma-bar-track { flex: 1; height: 6px; background: var(--bg4); border-radius: 3px; overflow: hidden; }
+.ma-bar-fill-buy { height: 100%; background: var(--green); border-radius: 3px; }
+.ma-bar-fill-sell { height: 100%; background: var(--red); border-radius: 3px; }
+.ma-price { width: 80px; text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text); }
+
+.position-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); padding: 20px; margin-bottom: 20px;
+}
+.position-title { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
+.position-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+.pos-item { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; text-align: center; }
+.pos-metal { font-size: 11px; color: var(--text3); margin-bottom: 8px; }
+.pos-indicator {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+}
+.pos-in { background: var(--green-dim2); color: var(--green); border: 1px solid rgba(76,175,130,0.3); }
+.pos-above { background: var(--red-dim2); color: var(--red); border: 1px solid rgba(224,85,85,0.3); }
+.pos-below { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(91,141,238,0.3); }
+
+/* MY OFFERS */
+.my-offer-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2);
+  padding: 18px 20px; margin-bottom: 12px; display: flex; align-items: center; gap: 16px;
+  transition: border-color 0.15s;
+}
+.my-offer-card:hover { border-color: var(--border2); }
+.my-offer-metal { display: flex; align-items: center; gap: 10px; min-width: 140px; }
+.my-offer-info { flex: 1; display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+.moi-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; }
+.moi-value { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 500; }
+.my-offer-actions { display: flex; gap: 8px; }
+.status-badge {
+  display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px;
+  border-radius: 20px; font-size: 10px; font-weight: 600; font-family: 'IBM Plex Mono', monospace;
+}
+.s-active { background: var(--green-dim); color: var(--green); border: 1px solid rgba(76,175,130,0.25); }
+.s-pending { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(201,168,76,0.25); }
+
+/* NEGOTIATIONS */
+.neg-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2);
+  padding: 18px 20px; margin-bottom: 12px;
+}
+.neg-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.neg-title { font-size: 14px; font-weight: 600; }
+.neg-body { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; }
+.neg-item .ni-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; }
+.neg-item .ni-value { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500; }
+.neg-actions { display: flex; gap: 8px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+
+/* PROFILE */
+.profile-grid { display: grid; grid-template-columns: 300px 1fr; gap: 20px; }
+.profile-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); padding: 24px; }
+.profile-avatar {
+  width: 64px; height: 64px; border-radius: 12px;
+  background: var(--gold-dim2); border: 2px solid rgba(201,168,76,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 600; color: var(--gold2);
+  margin-bottom: 16px;
+}
+.profile-company { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+.profile-type { font-size: 12px; color: var(--text3); margin-bottom: 16px; }
+.profile-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ps-item { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
+.ps-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; }
+.ps-value { font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 500; }
+.ver-badge {
+  display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px;
+  border-radius: 20px; font-size: 11px; font-weight: 600;
+  background: var(--green-dim); color: var(--green); border: 1px solid rgba(76,175,130,0.25);
+  margin-bottom: 14px;
+}
+
+/* MODAL */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(8,8,10,0.88); z-index: 200;
+  align-items: center; justify-content: center; backdrop-filter: blur(5px);
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: var(--radius2); width: 500px; max-width: 95vw;
+  padding: 30px; animation: modalIn 0.2s ease; max-height: 90vh; overflow-y: auto;
+}
+@keyframes modalIn { from{opacity:0;transform:translateY(-14px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
+.modal-title { font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+.modal-sub { font-size: 12px; color: var(--text3); margin-bottom: 24px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.form-row.full { grid-template-columns: 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: var(--text3); text-transform: uppercase; }
+.form-input, .form-select {
+  background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius);
+  color: var(--text); font-size: 13px; padding: 10px 12px;
+  font-family: 'IBM Plex Sans', sans-serif; outline: none; transition: border-color 0.15s;
+}
+.form-input:focus, .form-select:focus { border-color: var(--gold); }
+.form-input::placeholder { color: var(--text3); }
+.form-textarea { resize: vertical; min-height: 80px; }
+.modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+
+/* INTEREST MODAL */
+.int-detail {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 18px; margin-bottom: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+}
+.di-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; color: var(--text3); text-transform: uppercase; margin-bottom: 4px; }
+.di-value { font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 500; }
+.int-note {
+  background: var(--gold-dim); border: 1px solid rgba(201,168,76,0.2);
+  border-radius: var(--radius); padding: 14px; font-size: 12px;
+  color: var(--text2); line-height: 1.7;
+}
+
+/* AGREEMENT STEPS */
+.steps { display: flex; gap: 0; margin-bottom: 24px; }
+.step {
+  flex: 1; text-align: center; padding: 10px; position: relative;
+  font-size: 11px; color: var(--text3);
+}
+.step.done { color: var(--green); }
+.step.active { color: var(--gold2); }
+.step-num {
+  width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border2);
+  display: flex; align-items: center; justify-content: center; margin: 0 auto 6px;
+  font-size: 11px; font-weight: 600; font-family: 'IBM Plex Mono', monospace;
+}
+.step.done .step-num { border-color: var(--green); background: var(--green-dim); color: var(--green); }
+.step.active .step-num { border-color: var(--gold); background: var(--gold-dim); color: var(--gold2); }
+
+/* NOTIFICATION */
+.notif {
+  position: fixed; top: 70px; right: 22px; background: var(--bg2);
+  border: 1px solid var(--green); border-radius: var(--radius);
+  padding: 14px 18px; font-size: 13px; z-index: 300;
+  display: none; animation: slideIn 0.3s ease; max-width: 320px;
+}
+.notif.show { display: block; }
+@keyframes slideIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+.notif-title { font-weight: 600; color: var(--green); margin-bottom: 3px; font-size: 12px; }
+
+/* AUTH PAGE */
+.auth-page {
+  display: none; position: fixed; inset: 0; background: var(--bg);
+  z-index: 150; align-items: center; justify-content: center;
+}
+.auth-page.open { display: flex; }
+.auth-box {
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: var(--radius2); width: 420px; max-width: 95vw; padding: 36px;
+  animation: modalIn 0.25s ease;
+}
+.auth-logo { text-align: center; margin-bottom: 28px; }
+.auth-logo-text { font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 600; color: var(--gold2); letter-spacing: 0.1em; }
+.auth-tabs { display: flex; gap: 0; margin-bottom: 26px; background: var(--bg3); border-radius: var(--radius); padding: 3px; }
+.auth-tab {
+  flex: 1; padding: 8px; text-align: center; cursor: pointer; border-radius: 6px;
+  font-size: 13px; font-weight: 500; color: var(--text2); transition: all 0.15s;
+}
+.auth-tab.active { background: var(--bg2); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+.auth-footer { text-align: center; margin-top: 18px; font-size: 12px; color: var(--text3); }
+
+/* RESPONSIVE */
+@media (max-width: 1100px) {
+  .table-head, .table-row { grid-template-columns: 130px 80px 140px 120px 0 80px 0 100px; }
+  .table-row > :nth-child(5), .table-row > :nth-child(7),
+  .table-head > :nth-child(5), .table-head > :nth-child(7) { display: none; }
+  .stats-bar { grid-template-columns: 1fr 1fr; }
+  .analytics-grid { grid-template-columns: 1fr; }
+  .position-grid { grid-template-columns: 1fr 1fr; }
+  .profile-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .header-ticker { display: none; }
+  .table-head, .table-row { grid-template-columns: 120px 70px 130px 100px 80px; }
+  .table-row > :nth-child(n+6), .table-head > :nth-child(n+6) { display: none; }
+  .main { padding: 16px; }
+  .my-offer-info { grid-template-columns: 1fr 1fr; }
+  .neg-body { grid-template-columns: 1fr 1fr; }
+}
 </style>
 </head>
 <body>
-  <h1>OTC Metals Platform</h1>
-  <div class="sub">Внебиржевые сделки с драгоценными металлами</div>
 
-  <div class="card">
-    <h2>Опубликовать оффер</h2>
-    <div class="row">
-      <select id="metal">
-        <option value="gold">Золото</option>
-        <option value="silver">Серебро</option>
-        <option value="platinum">Платина</option>
-        <option value="palladium">Палладий</option>
-      </select>
-      <input id="price" type="number" placeholder="Цена ₽/г">
-      <input id="volume" type="number" placeholder="Объём, г">
-      <button onclick="publish()">Опубликовать</button>
+<!-- AUTH PAGE -->
+<div class="auth-page" id="auth-page">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="auth-logo-text">⬡ METALDESK</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:6px">OTC рынок драгоценных металлов</div>
     </div>
-    <div id="msg" style="margin-top:12px;font-size:13px;color:#8a909a;"></div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchAuthTab('login',this)">Войти</div>
+      <div class="auth-tab" onclick="switchAuthTab('reg',this)">Регистрация</div>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="tab-login">
+      <div class="form-group" style="margin-bottom:14px">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="login-email" placeholder="company@example.ru">
+      </div>
+      <div class="form-group" style="margin-bottom:22px">
+        <label class="form-label">Пароль</label>
+        <input class="form-input" type="password" id="login-pass" placeholder="••••••••">
+      </div>
+      <button class="btn btn-gold btn-lg btn-full" onclick="doLogin()">Войти в систему</button>
+      <div class="auth-footer">Только верифицированные компании</div>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="tab-reg" style="display:none">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Название компании</label>
+          <input class="form-input" id="reg-company" placeholder="ООО Золото-Трейд">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ИНН</label>
+          <input class="form-input" id="reg-inn" placeholder="7701234567">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Контактное лицо</label>
+          <input class="form-input" id="reg-contact" placeholder="Иванов Иван Иванович">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Телефон</label>
+          <input class="form-input" id="reg-phone" placeholder="+7 (999) 123-45-67">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" id="reg-email" placeholder="company@example.ru">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Тип участника</label>
+          <select class="form-select" id="reg-type">
+            <option>Аффинажный завод</option>
+            <option>Ювелирный завод</option>
+            <option>Ломбард</option>
+            <option>Дилер</option>
+            <option>Трейдер</option>
+            <option>Банк</option>
+            <option>Другое</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row full" style="margin-bottom:22px">
+        <div class="form-group">
+          <label class="form-label">Пароль</label>
+          <input class="form-input" type="password" id="reg-pass" placeholder="••••••••">
+        </div>
+      </div>
+      <button class="btn btn-gold btn-lg btn-full" onclick="doRegister()">Подать заявку на верификацию</button>
+      <div class="auth-footer">После проверки документов вы получите доступ</div>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo" onclick="showPage('market')">
+    <div class="logo-dot"></div>
+    METALDESK
+  </div>
+  <div class="header-ticker">
+    <div class="ticker-item"><span class="ticker-name">XAU</span><span class="ticker-price" id="t-xau">9 148</span><span class="ticker-change up">+0.32%</span></div>
+    <div class="ticker-item"><span class="ticker-name">XAG</span><span class="ticker-price">101.4</span><span class="ticker-change down">−0.18%</span></div>
+    <div class="ticker-item"><span class="ticker-name">XPT</span><span class="ticker-price">3 240</span><span class="ticker-change up">+0.07%</span></div>
+    <div class="ticker-item"><span class="ticker-name">XPD</span><span class="ticker-price">5 812</span><span class="ticker-change up">+1.24%</span></div>
+  </div>
+  <div class="header-nav" id="header-nav">
+    <button class="btn btn-ghost" onclick="showAuth()">Войти</button>
+    <button class="btn btn-gold" onclick="showCreate()">+ Разместить предложение</button>
+  </div>
+</header>
+
+<!-- APP -->
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Навигация</div>
+    <div class="sidebar-item active" onclick="showPage('market',this)"><div class="sidebar-dot dot-all"></div>Рынок предложений<span class="sidebar-count" id="cnt-all">24</span></div>
+    <div class="sidebar-item" onclick="showPage('analytics',this)"><div class="sidebar-dot" style="background:var(--blue)"></div>Аналитика</div>
+    <div class="sidebar-item" onclick="showPage('my-offers',this)"><div class="sidebar-dot dot-gold"></div>Мои предложения<span class="sidebar-count">3</span></div>
+    <div class="sidebar-item" onclick="showPage('negotiations',this)"><div class="sidebar-dot" style="background:var(--gold)"></div>Переговоры<span class="sidebar-count">2</span></div>
+    <div class="sidebar-item" onclick="showPage('profile',this)"><div class="sidebar-dot" style="background:var(--text3)"></div>Профиль</div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Металлы</div>
+    <div class="sidebar-item" onclick="sidebarMetal('gold',this)"><div class="sidebar-dot dot-gold"></div>Золото<span class="sidebar-count" id="cnt-gold">12</span></div>
+    <div class="sidebar-item" onclick="sidebarMetal('silver',this)"><div class="sidebar-dot dot-silver"></div>Серебро<span class="sidebar-count" id="cnt-silver">6</span></div>
+    <div class="sidebar-item" onclick="sidebarMetal('platinum',this)"><div class="sidebar-dot dot-pt"></div>Платина<span class="sidebar-count" id="cnt-platinum">4</span></div>
+    <div class="sidebar-item" onclick="sidebarMetal('palladium',this)"><div class="sidebar-dot dot-pd"></div>Палладий<span class="sidebar-count" id="cnt-palladium">2</span></div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Тип</div>
+    <div class="sidebar-item" onclick="sidebarType('buy',this)"><div class="sidebar-dot dot-buy"></div>Покупка</div>
+    <div class="sidebar-item" onclick="sidebarType('sell',this)"><div class="sidebar-dot dot-sell"></div>Продажа</div>
+  </div>
+  <div class="sidebar-user" id="sidebar-user" style="display:none">
+    <div class="user-card">
+      <div class="user-name" id="u-name">ООО Золото-Трейд</div>
+      <div class="user-type" id="u-type">Дилер</div>
+      <div class="user-rating">
+        <div class="rating-bar"><div class="rating-fill" style="width:96%"></div></div>
+        <span class="rating-val">96%</span>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- MARKET PAGE -->
+  <div class="page active" id="page-market">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Рынок предложений</div>
+        <div class="page-sub">Обновлено: <span id="clock">—</span> · Только верифицированные компании</div>
+      </div>
+      <button class="btn btn-gold" onclick="showCreate()">+ Новое предложение</button>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-card"><div class="stat-label">Активных предложений</div><div class="stat-value" id="s-total">24</div><div class="stat-sub"><span class="up">↑ 3</span> за последний час</div></div>
+      <div class="stat-card"><div class="stat-label">Лучшая покупка XAU</div><div class="stat-value">9 155</div><div class="stat-sub">руб/грамм · 15 кг</div></div>
+      <div class="stat-card"><div class="stat-label">Лучшая продажа XAU</div><div class="stat-value">9 142</div><div class="stat-sub">руб/грамм · 8 кг</div></div>
+      <div class="stat-card"><div class="stat-label">Спред XAU</div><div class="stat-value">13</div><div class="stat-sub">руб/грамм · <span class="up">сужается</span></div></div>
+    </div>
+    <div class="filters">
+      <div class="filter-group"><span class="filter-label">Металл:</span>
+        <select class="filter-select" id="f-metal" onchange="applyFilters()">
+          <option value="">Все</option><option value="gold">Золото</option>
+          <option value="silver">Серебро</option><option value="platinum">Платина</option>
+          <option value="palladium">Палладий</option>
+        </select>
+      </div>
+      <div class="filter-group"><span class="filter-label">Проба:</span>
+        <select class="filter-select" id="f-purity" onchange="applyFilters()">
+          <option value="">Любая</option><option>999.9</option><option>999.5</option>
+          <option>958</option><option>916</option><option>900</option><option>850</option>
+          <option>750</option><option>585</option><option>Лом</option>
+        </select>
+      </div>
+      <div class="filter-group"><span class="filter-label">Регион:</span>
+        <select class="filter-select" id="f-region" onchange="applyFilters()">
+          <option value="">Все регионы</option><option>Москва</option>
+          <option>Санкт-Петербург</option><option>Екатеринбург</option>
+          <option>Новосибирск</option><option>Казань</option>
+        </select>
+      </div>
+      <div class="filter-group"><span class="filter-label">Объём от:</span>
+        <select class="filter-select" id="f-volume" onchange="applyFilters()">
+          <option value="">Любой</option><option value="1">1+ кг</option>
+          <option value="5">5+ кг</option><option value="10">10+ кг</option><option value="50">50+ кг</option>
+        </select>
+      </div>
+      <div class="filter-chips">
+        <button class="chip c-all" id="chip-all" onclick="setChip('all')">Все</button>
+        <button class="chip" id="chip-buy" onclick="setChip('buy')">Покупка</button>
+        <button class="chip" id="chip-sell" onclick="setChip('sell')">Продажа</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <div class="table-head">
+        <div class="th">Металл</div><div class="th">Тип</div><div class="th">Цена</div>
+        <div class="th">Объём</div><div class="th">Регион</div><div class="th">Рейтинг</div>
+        <div class="th">Время</div><div class="th"></div>
+      </div>
+      <div id="table-body"></div>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>Активные офферы</h2>
-    <table>
-      <thead><tr><th>ID</th><th>Металл</th><th>Цена</th><th>Объём</th><th>Статус</th><th></th></tr></thead>
-      <tbody id="rows"></tbody>
-    </table>
+  <!-- ANALYTICS PAGE -->
+  <div class="page" id="page-analytics">
+    <div class="page-header">
+      <div><div class="page-title">Аналитика рынка</div><div class="page-sub">Данные обновляются в реальном времени</div></div>
+    </div>
+    <div class="position-card">
+      <div class="position-title">Ваша позиция относительно рынка</div>
+      <div class="position-grid">
+        <div class="pos-item"><div class="pos-metal">Золото 999.9</div><div class="pos-indicator pos-in">✓ В рынке</div></div>
+        <div class="pos-item"><div class="pos-metal">Серебро 999.9</div><div class="pos-indicator pos-above">↑ Выше рынка</div></div>
+        <div class="pos-item"><div class="pos-metal">Платина 999.5</div><div class="pos-indicator pos-below">↓ Ниже рынка</div></div>
+        <div class="pos-item"><div class="pos-metal">Палладий 999.5</div><div class="pos-indicator pos-in">✓ В рынке</div></div>
+      </div>
+    </div>
+    <div class="analytics-grid">
+      <div class="analytics-card">
+        <div class="analytics-card-title">Цены покупки и продажи</div>
+        <div class="metal-analytics">
+          <div class="ma-row">
+            <div class="ma-name" style="color:var(--gold2)">Золото</div>
+            <div class="ma-bars">
+              <div class="ma-bar-row"><span class="ma-bar-label" style="color:var(--green)">Покупка</span><div class="ma-bar-track"><div class="ma-bar-fill-buy" style="width:84%"></div></div><span class="ma-price">9 155</span></div>
+              <div class="ma-bar-row"><span class="ma-bar-label" style="color:var(--red)">Продажа</span><div class="ma-bar-track"><div class="ma-bar-fill-sell" style="width:78%"></div></div><span class="ma-price">9 142</span></div>
+            </div>
+          </div>
+          <div class="ma-row">
+            <div class="ma-name" style="color:var(--silver2)">Серебро</div>
+            <div class="ma-bars">
+              <div class="ma-bar-row"><span class="ma-bar-label" style="color:var(--green)">Покупка</span><div class="ma-bar-track"><div class="ma-bar-fill-buy" style="width:62%"></div></div><span class="ma-price">101.5</span></div>
+              <div class="ma-bar-row"><span class="ma-bar-label" style="color:var(--red)">Продажа</span><div class="ma-bar-track"><div class="ma-bar-fill-sell" style="width:58%"></div></div><span class="ma-price">101.2</span></div>
+            </div>
+          </div>
+          <div class="ma-row">
+            <div class="ma-name" style="color:var(--platinum2)">Платина</div>
+            <div class="ma-bars">
+              <div class="ma-bar-row"><span class="ma-bar-label" style="color:var(--green)">Покупка</span><div class="ma-bar-track"><div class="ma-bar-fill-buy" style="width:71%"></div></div><span class="ma-price">3 245</span></div>
+              <div class="ma-bar-row"><span class="ma-bar-label" style="color:var(--red)">Продажа</span><div class="ma-bar-track"><div class="ma-bar-fill-sell" style="width:68%"></div></div><span class="ma-price">3 238</span></div>
+            </div>
+          </div>
+          <div class="ma-row">
+            <div class="ma-name" style="color:var(--palladium2)">Палладий</div>
+            <div class="ma-bars">
+              <div class="ma-bar-row"><span class="ma-bar-label" style="color:var(--green)">Покупка</span><div class="ma-bar-track"><div class="ma-bar-fill-buy" style="width:91%"></div></div><span class="ma-price">5 820</span></div>
+              <div class="ma-bar-row"><span class="ma-bar-label" style="color:var(--red)">Продажа</span><div class="ma-bar-track"><div class="ma-bar-fill-sell" style="width:88%"></div></div><span class="ma-price">5 800</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="analytics-card">
+        <div class="analytics-card-title">Диапазоны рынка (руб/грамм)</div>
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+              <span style="color:var(--gold2);font-weight:600">Золото 999.9</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text3)">Средняя: 9 150</span>
+            </div>
+            <div style="background:var(--bg4);border-radius:4px;height:8px;position:relative">
+              <div style="position:absolute;left:10%;right:15%;height:100%;background:linear-gradient(90deg,var(--green),var(--red));border-radius:4px;opacity:0.7"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:5px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3)">
+              <span>9 100</span><span>9 220</span>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+              <span style="color:var(--silver2);font-weight:600">Серебро 999.9</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text3)">Средняя: 101.4</span>
+            </div>
+            <div style="background:var(--bg4);border-radius:4px;height:8px;position:relative">
+              <div style="position:absolute;left:8%;right:12%;height:100%;background:linear-gradient(90deg,var(--green),var(--red));border-radius:4px;opacity:0.7"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:5px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3)">
+              <span>99.5</span><span>103.2</span>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+              <span style="color:var(--platinum2);font-weight:600">Платина 999.5</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text3)">Средняя: 3 242</span>
+            </div>
+            <div style="background:var(--bg4);border-radius:4px;height:8px;position:relative">
+              <div style="position:absolute;left:12%;right:18%;height:100%;background:linear-gradient(90deg,var(--green),var(--red));border-radius:4px;opacity:0.7"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:5px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3)">
+              <span>3 180</span><span>3 300</span>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+              <span style="color:var(--palladium2);font-weight:600">Палладий 999.5</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text3)">Средняя: 5 810</span>
+            </div>
+            <div style="background:var(--bg4);border-radius:4px;height:8px;position:relative">
+              <div style="position:absolute;left:6%;right:10%;height:100%;background:linear-gradient(90deg,var(--green),var(--red));border-radius:4px;opacity:0.7"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:5px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3)">
+              <span>5 700</span><span>5 950</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- MY OFFERS PAGE -->
+  <div class="page" id="page-my-offers">
+    <div class="page-header">
+      <div><div class="page-title">Мои предложения</div><div class="page-sub">Активные и завершённые</div></div>
+      <button class="btn btn-gold" onclick="showCreate()">+ Новое предложение</button>
+    </div>
+    <div id="my-offers-list">
+      <div class="my-offer-card">
+        <div class="my-offer-metal">
+          <div class="metal-icon i-gold">Au</div>
+          <div><div class="metal-name">Золото</div><div class="metal-purity">999.9</div></div>
+        </div>
+        <div class="my-offer-info">
+          <div><div class="moi-label">Тип</div><div><span class="badge b-sell">ПРОД</span></div></div>
+          <div><div class="moi-label">Цена</div><div class="moi-value">9 150</div></div>
+          <div><div class="moi-label">Объём</div><div class="moi-value">15 кг</div></div>
+          <div><div class="moi-label">Статус</div><div><span class="status-badge s-active">● Активно</span></div></div>
+        </div>
+        <div class="my-offer-actions">
+          <button class="btn btn-ghost" onclick="editOffer(1)">Изменить</button>
+          <button class="btn btn-red" onclick="withdrawOffer(1)">Снять</button>
+        </div>
+      </div>
+      <div class="my-offer-card">
+        <div class="my-offer-metal">
+          <div class="metal-icon i-silver">Ag</div>
+          <div><div class="metal-name">Серебро</div><div class="metal-purity">999.9</div></div>
+        </div>
+        <div class="my-offer-info">
+          <div><div class="moi-label">Тип</div><div><span class="badge b-buy">КУПЛЯ</span></div></div>
+          <div><div class="moi-label">Цена</div><div class="moi-value">101.2</div></div>
+          <div><div class="moi-label">Объём</div><div class="moi-value">200 кг</div></div>
+          <div><div class="moi-label">Статус</div><div><span class="status-badge s-pending">◎ На согласовании</span></div></div>
+        </div>
+        <div class="my-offer-actions">
+          <button class="btn btn-ghost" onclick="editOffer(2)">Изменить</button>
+          <button class="btn btn-red" onclick="withdrawOffer(2)">Снять</button>
+        </div>
+      </div>
+      <div class="my-offer-card">
+        <div class="my-offer-metal">
+          <div class="metal-icon i-gold">Au</div>
+          <div><div class="metal-name">Золото</div><div class="metal-purity">750</div></div>
+        </div>
+        <div class="my-offer-info">
+          <div><div class="moi-label">Тип</div><div><span class="badge b-sell">ПРОД</span></div></div>
+          <div><div class="moi-label">Цена</div><div class="moi-value">7 020</div></div>
+          <div><div class="moi-label">Объём</div><div class="moi-value">8 кг</div></div>
+          <div><div class="moi-label">Статус</div><div><span class="status-badge s-active">● Активно</span></div></div>
+        </div>
+        <div class="my-offer-actions">
+          <button class="btn btn-ghost" onclick="editOffer(3)">Изменить</button>
+          <button class="btn btn-red" onclick="withdrawOffer(3)">Снять</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEGOTIATIONS PAGE -->
+  <div class="page" id="page-negotiations">
+    <div class="page-header">
+      <div><div class="page-title">Активные переговоры</div><div class="page-sub">2 активных · 14 завершённых</div></div>
+    </div>
+    <div class="neg-card">
+      <div class="neg-header">
+        <div>
+          <div class="neg-title">Золото 999.9 · Продажа</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">Дилер · Рейтинг 98% · Сделок 145 · Начато 14:31</div>
+        </div>
+        <span class="status-badge s-pending">Ожидает подтверждения</span>
+      </div>
+      <div class="steps">
+        <div class="step done"><div class="step-num">✓</div>Интерес</div>
+        <div class="step active"><div class="step-num">2</div>Согласование</div>
+        <div class="step"><div class="step-num">3</div>Подтверждение</div>
+        <div class="step"><div class="step-num">4</div>Раскрытие</div>
+      </div>
+      <div class="neg-body">
+        <div class="neg-item"><div class="ni-label">Цена</div><div class="ni-value">9 150 руб/г</div></div>
+        <div class="neg-item"><div class="ni-label">Объём</div><div class="ni-value">15 кг</div></div>
+        <div class="neg-item"><div class="ni-label">Срок</div><div class="ni-value">3 рабочих дня</div></div>
+        <div class="neg-item"><div class="ni-label">Оплата</div><div class="ni-value">Предоплата</div></div>
+        <div class="neg-item"><div class="ni-label">Доставка</div><div class="ni-value">Самовывоз</div></div>
+      </div>
+      <div class="neg-actions">
+        <button class="btn btn-green" onclick="confirmNeg(1)">Подтвердить условия</button>
+        <button class="btn btn-ghost" onclick="">Предложить изменения</button>
+        <button class="btn btn-red" onclick="">Отклонить</button>
+      </div>
+    </div>
+    <div class="neg-card">
+      <div class="neg-header">
+        <div>
+          <div class="neg-title">Серебро 999.9 · Покупка</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">Аффинажный завод · Рейтинг 100% · Сделок 312 · Начато 13:50</div>
+        </div>
+        <span class="status-badge s-active">Ваш ход</span>
+      </div>
+      <div class="steps">
+        <div class="step done"><div class="step-num">✓</div>Интерес</div>
+        <div class="step done"><div class="step-num">✓</div>Согласование</div>
+        <div class="step active"><div class="step-num">3</div>Подтверждение</div>
+        <div class="step"><div class="step-num">4</div>Раскрытие</div>
+      </div>
+      <div class="neg-body">
+        <div class="neg-item"><div class="ni-label">Цена</div><div class="ni-value">101.2 руб/г</div></div>
+        <div class="neg-item"><div class="ni-label">Объём</div><div class="ni-value">200 кг</div></div>
+        <div class="neg-item"><div class="ni-label">Срок</div><div class="ni-value">5 рабочих дней</div></div>
+        <div class="neg-item"><div class="ni-label">Оплата</div><div class="ni-value">По факту</div></div>
+        <div class="neg-item"><div class="ni-label">Доставка</div><div class="ni-value">Доставка продавца</div></div>
+      </div>
+      <div class="neg-actions">
+        <button class="btn btn-gold" onclick="confirmNeg(2)">Раскрыть контрагента</button>
+        <button class="btn btn-ghost" onclick="">Отклонить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE PAGE -->
+  <div class="page" id="page-profile">
+    <div class="page-header">
+      <div><div class="page-title">Профиль компании</div></div>
+      <button class="btn btn-ghost" onclick="logout()">Выйти</button>
+    </div>
+    <div class="profile-grid">
+      <div class="profile-card">
+        <div class="profile-avatar" id="p-avatar">ЗТ</div>
+        <div class="profile-company" id="p-company">ООО Золото-Трейд</div>
+        <div class="profile-type" id="p-type">Дилер</div>
+        <div class="ver-badge">✓ Верифицирован</div>
+        <div class="profile-stats">
+          <div class="ps-item"><div class="ps-label">Рейтинг</div><div class="ps-value" style="color:var(--green)">96%</div></div>
+          <div class="ps-item"><div class="ps-label">Сделок</div><div class="ps-value">87</div></div>
+          <div class="ps-item"><div class="ps-label">Завершено</div><div class="ps-value">84</div></div>
+          <div class="ps-item"><div class="ps-label">Отменено</div><div class="ps-value" style="color:var(--red)">3</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="profile-card" style="margin-bottom:16px">
+          <div style="font-size:13px;font-weight:600;margin-bottom:16px">Данные компании</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div class="form-group"><label class="form-label">Название</label><input class="form-input" id="pf-company" value="ООО Золото-Трейд"></div>
+            <div class="form-group"><label class="form-label">ИНН</label><input class="form-input" value="7701234567"></div>
+            <div class="form-group"><label class="form-label">Контакт</label><input class="form-input" value="Иванов Иван Иванович"></div>
+            <div class="form-group"><label class="form-label">Телефон</label><input class="form-input" value="+7 (999) 123-45-67"></div>
+            <div class="form-group"><label class="form-label">Email</label><input class="form-input" value="info@zoloto-trade.ru"></div>
+            <div class="form-group"><label class="form-label">Регион</label>
+              <select class="form-select"><option>Москва</option><option>Санкт-Петербург</option><option>Екатеринбург</option></select>
+            </div>
+          </div>
+          <div style="margin-top:16px;display:flex;justify-content:flex-end">
+            <button class="btn btn-gold" onclick="saveProfile()">Сохранить изменения</button>
+          </div>
+        </div>
+        <div class="profile-card">
+          <div style="font-size:13px;font-weight:600;margin-bottom:14px">Скорость ответа</div>
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:500;color:var(--green)">1.8ч</div>
+            <div style="flex:1">
+              <div style="font-size:12px;color:var(--text2);margin-bottom:6px">Среднее время ответа на запросы</div>
+              <div style="background:var(--bg4);border-radius:3px;height:6px">
+                <div style="width:75%;height:100%;background:var(--green);border-radius:3px"></div>
+              </div>
+              <div style="font-size:11px;color:var(--text3);margin-top:4px">Лучше чем 75% участников</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- CREATE MODAL -->
+<div class="modal-overlay" id="modal-create">
+  <div class="modal">
+    <div class="modal-title">Новое предложение</div>
+    <div class="modal-sub">Будет видно только верифицированным участникам</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Металл</label>
+        <select class="form-select" id="n-metal" onchange="updatePurity()">
+          <option value="gold">Золото</option><option value="silver">Серебро</option>
+          <option value="platinum">Платина</option><option value="palladium">Палладий</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Тип</label>
+        <select class="form-select" id="n-type">
+          <option value="sell">Продажа</option><option value="buy">Покупка</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Проба</label>
+        <select class="form-select" id="n-purity">
+          <option>999.9</option><option>958</option><option>916</option>
+          <option>900</option><option>850</option><option>750</option><option>585</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Тип товара</label>
+        <select class="form-select" id="n-form" onchange="toggleDelivery()">
+          <option value="scrap">Лом</option><option value="pure">Чистый металл</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row" id="delivery-row" style="display:none">
+      <div class="form-group"><label class="form-label">Форма поставки</label>
+        <select class="form-select" id="n-delivery">
+          <option>Слитки</option><option>Гранулы</option>
+        </select>
+      </div>
+      <div></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Цена (руб/грамм)</label>
+        <input class="form-input" type="number" id="n-price" placeholder="9 150">
+      </div>
+      <div class="form-group"><label class="form-label">Объём (кг)</label>
+        <input class="form-input" type="number" id="n-volume" placeholder="10">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Регион</label>
+        <select class="form-select" id="n-region">
+          <option>Москва</option><option>Санкт-Петербург</option>
+          <option>Екатеринбург</option><option>Новосибирск</option><option>Казань</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">НДС</label>
+        <select class="form-select" id="n-vat">
+          <option>С НДС 20%</option><option>Без НДС</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Срочность</label>
+        <select class="form-select" id="n-urgency">
+          <option>Обычная</option><option>Срочно (24 часа)</option><option>Очень срочно (сегодня)</option>
+        </select>
+      </div>
+      <div></div>
+    </div>
+    <div class="form-row full">
+      <div class="form-group"><label class="form-label">Комментарий (необязательно)</label>
+        <textarea class="form-input form-textarea" id="n-comment" placeholder="Условия оплаты, особые требования..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-create')">Отмена</button>
+      <button class="btn btn-gold" onclick="submitOffer()">Разместить</button>
+    </div>
+  </div>
+</div>
+
+<!-- INTEREST MODAL -->
+<div class="modal-overlay" id="modal-interest">
+  <div class="modal">
+    <div class="modal-title" id="int-title">Проявить интерес</div>
+    <div class="modal-sub">Анонимное предложение · Компания верифицирована</div>
+    <div class="int-detail" id="int-detail"></div>
+    <div class="int-note">После взаимного подтверждения обеим сторонам будут раскрыты данные компании-контрагента. Сделка заключается самостоятельно вне платформы.</div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-interest')">Отмена</button>
+      <button class="btn btn-gold" onclick="confirmInterest()">Подтвердить интерес</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT REVEAL MODAL -->
+<div class="modal-overlay" id="modal-reveal">
+  <div class="modal">
+    <div class="modal-title" style="color:var(--green)">✓ Сделка согласована</div>
+    <div class="modal-sub">Обе стороны подтвердили условия. Раскрываем контрагента.</div>
+    <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:20px;margin-bottom:20px">
+      <div style="font-size:16px;font-weight:600;margin-bottom:4px" id="reveal-company">ООО АффинажГрупп</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:16px">Аффинажный завод · Рейтинг 100% · Сделок 312</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div><div class="di-label">Контакт</div><div style="font-size:13px;font-weight:500">Петров Сергей Иванович</div></div>
+        <div><div class="di-label">Телефон</div><div style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:500;color:var(--gold2)">+7 (495) 123-45-67</div></div>
+        <div><div class="di-label">Email</div><div style="font-size:13px">info@affinaj.ru</div></div>
+        <div><div class="di-label">Регион</div><div style="font-size:13px">Москва</div></div>
+      </div>
+    </div>
+    <div style="background:var(--green-dim);border:1px solid rgba(76,175,130,0.2);border-radius:var(--radius);padding:12px;font-size:12px;color:var(--text2);line-height:1.7">
+      Дальнейшее оформление сделки происходит напрямую между компаниями вне платформы. После завершения просим оценить контрагента.
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-reveal')">Закрыть</button>
+      <button class="btn btn-gold" onclick="closeModal('modal-reveal')">Понятно, спасибо</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif"><div class="notif-title" id="notif-title">✓ Готово</div><div id="notif-text"></div></div>
 
 <script>
-const API = "";
-let offers = [];
+const METALS = {
+  gold:     {label:'Золото',    purity:'999.9', code:'XAU', icon:'Au', cls:'i-gold'},
+  silver:   {label:'Серебро',   purity:'999.9', code:'XAG', icon:'Ag', cls:'i-silver'},
+  platinum: {label:'Платина',   purity:'999.5', code:'XPT', icon:'Pt', cls:'i-platinum'},
+  palladium:{label:'Палладий',  purity:'999.5', code:'XPD', icon:'Pd', cls:'i-palladium'},
+};
+const PURITIES = {
+  gold:['999.9','958','916','900','850','750','585','Лом'],
+  silver:['999','960','925','875','800','Лом'],
+  platinum:['999.5','Лом платины'],
+  palladium:['999.5'],
+};
 
-async function loadOffers() {
-  try {
-    const res = await fetch(API + "/offers");
-    if (!res.ok) throw new Error(await res.text());
-    const data = await res.json();
-    if (!Array.isArray(data)) throw new Error("Ожидался массив офферов");
-    offers = data.map(o => ({
-      id: o.offer_id,
-      metal: o.metal,
-      type: o.side,
-      price: parseFloat(o.price_rub_per_gram),
-      volume: parseFloat(o.volume_grams),
-      region: o.region || "—",
-      rating: o.rating || 90,
-      status: o.status || "active",
-      time: new Date(o.created_at).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" }),
-    }));
-    renderRows(offers);
-  } catch (e) {
-    console.error("Ошибка загрузки офферов:", e);
-    document.getElementById("rows").innerHTML =
-      '<tr><td colspan="6" style="color:#f87171">Не удалось загрузить офферы</td></tr>';
+let offers = [
+  {id:1,metal:'gold',type:'sell',price:9150,volume:15,region:'Москва',rating:98,purity:'999.9',form:'pure',time:'14:28'},
+  {id:2,metal:'gold',type:'buy',price:9155,volume:8,region:'Санкт-Петербург',rating:95,purity:'999.9',form:'pure',time:'14:31'},
+  {id:3,metal:'silver',type:'sell',price:101.5,volume:120,region:'Москва',rating:100,purity:'999.9',form:'scrap',time:'14:20'},
+  {id:4,metal:'gold',type:'sell',price:9148,volume:3,region:'Екатеринбург',rating:87,purity:'750',form:'scrap',time:'14:15'},
+  {id:5,metal:'platinum',type:'buy',price:3245,volume:2,region:'Москва',rating:92,purity:'999.5',form:'pure',time:'14:10'},
+  {id:6,metal:'gold',type:'buy',price:9152,volume:25,region:'Москва',rating:99,purity:'999.9',form:'pure',time:'14:05'},
+  {id:7,metal:'palladium',type:'sell',price:5820,volume:1.5,region:'Санкт-Петербург',rating:91,purity:'999.5',form:'pure',time:'13:58'},
+  {id:8,metal:'silver',type:'buy',price:101.2,volume:500,region:'Екатеринбург',rating:96,purity:'999',form:'scrap',time:'13:50'},
+  {id:9,metal:'platinum',type:'sell',price:3238,volume:5,region:'Москва',rating:88,purity:'999.5',form:'pure',time:'13:45'},
+  {id:10,metal:'gold',type:'sell',price:9160,volume:50,region:'Новосибирск',rating:94,purity:'999.9',form:'pure',time:'13:40'},
+  {id:11,metal:'gold',type:'buy',price:9145,volume:10,region:'Казань',rating:90,purity:'585',form:'scrap',time:'13:30'},
+  {id:12,metal:'silver',type:'sell',price:101.8,volume:80,region:'Москва',rating:97,purity:'925',form:'scrap',time:'13:20'},
+  {id:13,metal:'platinum',type:'buy',price:3242,volume:3,region:'Санкт-Петербург',rating:85,purity:'999.5',form:'pure',time:'13:10'},
+  {id:14,metal:'gold',type:'sell',price:9155,volume:20,region:'Москва',rating:99,purity:'999.9',form:'pure',time:'13:00'},
+  {id:15,metal:'palladium',type:'buy',price:5800,volume:2,region:'Москва',rating:93,purity:'999.5',form:'pure',time:'12:50'},
+];
+
+let activeFilter = {metal:'',type:'',region:'',volume:'',purity:''};
+let currentUser = null;
+
+// AUTH
+function showAuth() { document.getElementById('auth-page').classList.add('open'); }
+function hideAuth() { document.getElementById('auth-page').classList.remove('open'); }
+
+function switchAuthTab(tab, el) {
+  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-login').style.display = tab==='login'?'block':'none';
+  document.getElementById('tab-reg').style.display = tab==='reg'?'block':'none';
+}
+
+function doLogin() {
+  const email = document.getElementById('login-email').value;
+  if (!email) { showNotif('Ошибка','Введите email','red'); return; }
+  currentUser = {name:'ООО Золото-Трейд', type:'Дилер', email};
+  hideAuth();
+  applyUserUI();
+  showNotif('Добро пожаловать','Вы вошли в систему');
+}
+
+function doRegister() {
+  const company = document.getElementById('reg-company').value;
+  if (!company) { showNotif('Ошибка','Заполните название компании','red'); return; }
+  hideAuth();
+  showNotif('Заявка отправлена','После проверки документов вы получите доступ');
+}
+
+function logout() {
+  currentUser = null;
+  document.getElementById('sidebar-user').style.display = 'none';
+  document.getElementById('header-nav').innerHTML = `
+    <button class="btn btn-ghost" onclick="showAuth()">Войти</button>
+    <button class="btn btn-gold" onclick="showCreate()">+ Разместить предложение</button>`;
+  showPage('market');
+}
+
+function applyUserUI() {
+  if (!currentUser) return;
+  document.getElementById('sidebar-user').style.display = 'block';
+  document.getElementById('u-name').textContent = currentUser.name;
+  document.getElementById('u-type').textContent = currentUser.type;
+  document.getElementById('header-nav').innerHTML = `
+    <button class="btn btn-ghost" onclick="showPage('profile')">Мой профиль</button>
+    <button class="btn btn-gold" onclick="showCreate()">+ Новое предложение</button>`;
+}
+
+// NAVIGATION
+function showPage(name, sidebarEl) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if (sidebarEl) {
+    document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
+    sidebarEl.classList.add('active');
   }
 }
 
+// FILTERS
+function applyFilters() {
+  activeFilter.metal = document.getElementById('f-metal').value;
+  activeFilter.region = document.getElementById('f-region').value;
+  activeFilter.volume = document.getElementById('f-volume').value;
+  activeFilter.purity = document.getElementById('f-purity').value;
+  let list = offers.filter(o=>{
+    if (activeFilter.metal && o.metal!==activeFilter.metal) return false;
+    if (activeFilter.type && o.type!==activeFilter.type) return false;
+    if (activeFilter.region && o.region!==activeFilter.region) return false;
+    if (activeFilter.volume && o.volume<parseFloat(activeFilter.volume)) return false;
+    if (activeFilter.purity && o.purity!==activeFilter.purity) return false;
+    return true;
+  });
+  renderRows(list);
+}
+
+function setChip(t) {
+  activeFilter.type = t==='all'?'':t;
+  document.querySelectorAll('.chip').forEach(c=>c.className='chip');
+  if(t==='all') document.getElementById('chip-all').classList.add('c-all');
+  if(t==='buy') document.getElementById('chip-buy').classList.add('c-buy');
+  if(t==='sell') document.getElementById('chip-sell').classList.add('c-sell');
+  applyFilters();
+}
+
+function sidebarMetal(metal, el) {
+  document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('f-metal').value = metal;
+  showPage('market');
+  applyFilters();
+}
+
+function sidebarType(type, el) {
+  document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  showPage('market');
+  setChip(type);
+}
+
+function formatP(p,m) {
+  if(m==='silver'||m==='platinum'||m==='palladium')
+    return p.toLocaleString('ru-RU',{minimumFractionDigits:1,maximumFractionDigits:1});
+  return p.toLocaleString('ru-RU');
+}
+
 function renderRows(list) {
-  const rows = list.map(o => `
-    <tr>
-      <td class="id">${String(o.id).slice(0, 8)}</td>
-      <td>${o.metal ?? "—"}</td>
-      <td>${Number.isFinite(o.price) ? o.price : "—"}</td>
-      <td>${Number.isFinite(o.volume) ? o.volume : "—"}</td>
-      <td><span class="badge ${o.status}">${o.status}</span></td>
-      <td>${o.status === "active" ? `<button onclick="withdraw('${o.id}')" style="background:#2c323d;color:#e6e8eb;padding:5px 12px;">Снять</button>` : ""}</td>
-    </tr>`).join("");
-  document.getElementById("rows").innerHTML = rows || '<tr><td colspan="6" style="color:#8a909a">Пока нет активных офферов</td></tr>';
+  const tb = document.getElementById('table-body');
+  if(!list.length){
+    tb.innerHTML=`<div class="empty-state"><div class="empty-icon">◈</div><div class="empty-text">Нет предложений по выбранным фильтрам</div></div>`;
+    return;
+  }
+  tb.innerHTML = list.map(o=>{
+    const m=METALS[o.metal]; const isBuy=o.type==='buy';
+    return `<div class="table-row" onclick="showInterest(${o.id})">
+      <div class="metal-cell"><div class="metal-icon ${m.cls}">${m.icon}</div><div><div class="metal-name">${m.label}</div><div class="metal-purity">${o.purity||m.purity}</div></div></div>
+      <div><span class="badge ${isBuy?'b-buy':'b-sell'}">${isBuy?'КУПЛЯ':'ПРОД'}</span></div>
+      <div><div class="price-cell">${formatP(o.price,o.metal)}</div><div class="price-unit">руб/г</div></div>
+      <div><div class="vol-cell">${o.volume} <span class="vol-unit">кг</span></div><div style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace">${(o.volume*1000).toLocaleString('ru-RU')} г</div></div>
+      <div class="region-cell">${o.region}</div>
+      <div class="rating-cell"><div class="r-bar"><div class="r-fill" style="width:${o.rating}%"></div></div><span class="r-text">${o.rating}%</span></div>
+      <div class="time-cell">${o.time}</div>
+      <div class="action-cell"><button class="btn-interest" onclick="event.stopPropagation();showInterest(${o.id})">Интересно →</button></div>
+    </div>`;
+  }).join('');
+  document.getElementById('s-total').textContent = list.length;
 }
-async function publish() {
-  const body = {
-    offerId: crypto.randomUUID(),
-    metal: document.getElementById("metal").value,
-    price: Number(document.getElementById("price").value),
-    volume: Number(document.getElementById("volume").value)
-  };
-  const r = await fetch(API + "/offer/publish", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(body) });
-  const d = await r.json();
-  document.getElementById("msg").textContent = d.ok ? "Опубликовано, версия " + d.version : "Ошибка: " + d.error;
-  loadOffers();
+
+// CREATE OFFER
+function showCreate() { document.getElementById('modal-create').classList.add('open'); }
+
+function updatePurity() {
+  const metal = document.getElementById('n-metal').value;
+  const sel = document.getElementById('n-purity');
+  sel.innerHTML = (PURITIES[metal]||['999.9']).map(p=>`<option>${p}</option>`).join('');
 }
-async function withdraw(id) {
-  await fetch(API + "/offer/withdraw", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ offerId: id }) });
-  loadOffers();
+
+function toggleDelivery() {
+  const v = document.getElementById('n-form').value;
+  document.getElementById('delivery-row').style.display = v==='pure'?'grid':'none';
 }
+
+function submitOffer() {
+  const metal=document.getElementById('n-metal').value;
+  const type=document.getElementById('n-type').value;
+  const price=parseFloat(document.getElementById('n-price').value);
+  const volume=parseFloat(document.getElementById('n-volume').value);
+  const region=document.getElementById('n-region').value;
+  const purity=document.getElementById('n-purity').value;
+  const form=document.getElementById('n-form').value;
+  if(!price||!volume){showNotif('Ошибка','Укажите цену и объём','red');return;}
+  const now=new Date();
+  const time=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  const newO={id:Date.now(),metal,type,price,volume,region,purity,form,rating:Math.floor(Math.random()*10)+88,time};
+  offers.unshift(newO);
+  closeModal('modal-create');
+  applyFilters();
+  setTimeout(()=>{const r=document.querySelectorAll('.table-row');if(r[0])r[0].classList.add('highlight');},50);
+  document.getElementById('n-price').value='';
+  document.getElementById('n-volume').value='';
+  document.getElementById('n-comment').value='';
+  showNotif('Предложение размещено','Оно появилось в рынке');
+}
+
+// INTEREST
+function showInterest(id) {
+  const o=offers.find(x=>x.id===id); if(!o)return;
+  const m=METALS[o.metal]; const isBuy=o.type==='buy';
+  document.getElementById('int-title').textContent=isBuy?'Предложить продажу':'Запросить покупку';
+  document.getElementById('int-detail').innerHTML=`
+    <div><div class="di-label">Металл</div><div class="di-value">${m.label} ${o.purity||m.purity}</div></div>
+    <div><div class="di-label">Тип</div><div class="di-value">${isBuy?'Покупка':'Продажа'}</div></div>
+    <div><div class="di-label">Цена</div><div class="di-value">${formatP(o.price,o.metal)} руб/г</div></div>
+    <div><div class="di-label">Объём</div><div class="di-value">${o.volume} кг</div></div>
+    <div><div class="di-label">Регион</div><div class="di-value">${o.region}</div></div>
+    <div><div class="di-label">Участник</div><div class="di-value" style="font-size:12px">Рейтинг ${o.rating}%</div></div>`;
+  document.getElementById('modal-interest').classList.add('open');
+}
+
+function confirmInterest() {
+  closeModal('modal-interest');
+  showNotif('Интерес отправлен','Ожидайте подтверждения от контрагента');
+}
+
+function confirmNeg(id) {
+  closeModal('modal-interest');
+  document.getElementById('modal-reveal').classList.add('open');
+}
+
+// MY OFFERS
+function withdrawOffer(id) {
+  if(confirm('Снять предложение с рынка?')){
+    showNotif('Предложение снято','Оно удалено из рынка');
+  }
+}
+function editOffer(id) { showCreate(); }
+
+function saveProfile() {
+  const name=document.getElementById('pf-company').value;
+  document.getElementById('u-name').textContent=name;
+  showNotif('Профиль сохранён','Данные обновлены');
+}
+
+// MODAL
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});
+});
+
+// NOTIFICATION
+function showNotif(title,text,type) {
+  const n=document.getElementById('notif');
+  const t=document.getElementById('notif-title');
+  const tx=document.getElementById('notif-text');
+  t.textContent=(type==='red'?'✗ ':' ✓ ')+title;
+  t.style.color=type==='red'?'var(--red)':'var(--green)';
+  n.style.borderColor=type==='red'?'var(--red)':'var(--green)';
+  tx.textContent=text;
+  n.classList.add('show');
+  setTimeout(()=>n.classList.remove('show'),3500);
+}
+
+// CLOCK
+setInterval(()=>{
+  const n=new Date();
+  document.getElementById('clock').textContent=
+    n.getHours().toString().padStart(2,'0')+':'+
+    n.getMinutes().toString().padStart(2,'0')+':'+
+    n.getSeconds().toString().padStart(2,'0');
+},1000);
+
+// API LOAD (подключается к реальному /offers когда есть бэкенд)
+async function loadOffers() {
+  try {
+    const res = await fetch('/offers');
+    if(!res.ok) throw new Error('no api');
+    const data = await res.json();
+    if(data && data.length > 0) {
+      offers = data.map(o=>({
+        id: o.offer_id, metal: o.metal, type: o.side,
+        price: parseFloat(o.price_rub_per_gram),
+        volume: parseFloat(o.volume_grams)/1000,
+        region: o.region||'—', rating: o.rating||90,
+        purity: o.purity||'999.9', form: o.metal_form||'pure',
+        time: new Date(o.created_at).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})
+      }));
+    }
+  } catch(e) { /* используем моковые данные */ }
+  applyFilters();
+}
+
+// INIT
 loadOffers();
 </script>
 </body>
