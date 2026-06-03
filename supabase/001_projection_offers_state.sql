@@ -1,4 +1,4 @@
--- Run in Supabase → SQL Editor (or: DATABASE_URL=... npm run db:migrate)
+-- Применение: DATABASE_URL='postgresql://...' npm run migrate
 CREATE SCHEMA IF NOT EXISTS projection;
 
 CREATE TABLE IF NOT EXISTS projection.offers_state (

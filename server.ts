@@ -1,28 +1,138 @@
 import express from "express";
 import cors from "cors";
 import path from "path";
-import { pool } from "./db";
-import { OfferService } from "./offer.service";
+import { registerParticipant, loginParticipant } from "./auth.service";
+import {
+  listMarketOffers,
+  listMyOffers,
+  publishOffer,
+  withdrawOffer,
+} from "./offers.service";
+import { sendError } from "./errors";
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "public")));
-app.post("/offer/publish", async (req, res) => { const r = await OfferService.publishOffer(req.body); res.status(r.ok ? 200 : 400).json(r); });
-app.post("/offer/update", async (req, res) => { const r = await OfferService.updateOffer(req.body); res.status(r.ok ? 200 : 400).json(r); });
-app.post("/offer/withdraw", async (req, res) => { const r = await OfferService.withdrawOffer(req.body.offerId); res.status(r.ok ? 200 : 400).json(r); });
+
+app.post("/auth/register", async (req, res) => {
+  try {
+    const {
+      company_name,
+      inn,
+      contact_person,
+      phone,
+      email,
+      password,
+      participant_type,
+      region,
+    } = req.body ?? {};
+    if (!company_name || !email || !password || !participant_type) {
+      return res.status(400).json({
+        error: "Обязательны поля: company_name, email, password, participant_type",
+      });
+    }
+    const result = await registerParticipant({
+      company_name,
+      inn,
+      contact_person,
+      phone,
+      email,
+      password,
+      participant_type,
+      region,
+    });
+    res.status(201).json(result);
+  } catch (e) {
+    sendError(res, "POST /auth/register", e);
+  }
+});
+
+app.post("/auth/login", async (req, res) => {
+  try {
+    const { email, password } = req.body ?? {};
+    if (!email || !password) {
+      return res.status(400).json({ error: "Укажите email и password" });
+    }
+    const participant = await loginParticipant(email, password);
+    if (!participant) {
+      return res.status(401).json({ error: "Неверный email или пароль" });
+    }
+    res.json(participant);
+  } catch (e) {
+    sendError(res, "POST /auth/login", e);
+  }
+});
+
 app.get("/offers", async (_req, res) => {
   try {
-    const r = await pool.query(
-      `SELECT offer_id, metal, side, price_rub_per_gram, volume_grams, region, purity, participant_type, rating, status, created_at
-       FROM projection.offers_state
-       WHERE status = 'active'
-       ORDER BY created_at DESC`
-    );
-    res.json(r.rows);
-  } catch (e: unknown) {
-    const message = e instanceof Error ? e.message : String(e);
-    console.error("GET /offers:", message);
-    res.status(500).json({ error: message });
+    const rows = await listMarketOffers();
+    res.json(rows);
+  } catch (e) {
+    sendError(res, "GET /offers", e);
+  }
+});
+
+app.post("/offer/publish", async (req, res) => {
+  try {
+    const b = req.body ?? {};
+    const participant_id = b.participant_id;
+    const metal = b.metal;
+    const side = b.side;
+    const price_rub_per_gram = Number(b.price_rub_per_gram ?? b.price);
+    const volume_grams = Number(b.volume_grams ?? b.volume);
+
+    if (!participant_id || !metal || !side || !price_rub_per_gram || !volume_grams) {
+      return res.status(400).json({
+        error:
+          "Обязательны: participant_id, metal, side, price_rub_per_gram (или price), volume_grams (или volume)",
+      });
+    }
+
+    const result = await publishOffer({
+      participant_id,
+      metal,
+      side,
+      price_rub_per_gram,
+      volume_grams,
+      region: b.region,
+      purity: b.purity,
+      vat_mode: b.vat_mode,
+      urgency: b.urgency,
+      metal_form: b.metal_form,
+      comment: b.comment,
+    });
+    res.status(201).json(result);
+  } catch (e) {
+    const notFound = e instanceof Error && e.message.includes("не найден");
+    sendError(res, "POST /offer/publish", e, notFound ? 404 : 500);
+  }
+});
+
+app.post("/offer/withdraw", async (req, res) => {
+  try {
+    const offerId = req.body?.offerId ?? req.body?.offer_id;
+    if (!offerId) {
+      return res.status(400).json({ error: "Укажите offerId" });
+    }
+    const result = await withdrawOffer(offerId);
+    res.json(result);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "";
+    sendError(res, "POST /offer/withdraw", e, msg.includes("не найден") ? 404 : 500);
+  }
+});
+
+app.get("/my-offers", async (req, res) => {
+  try {
+    const participant_id = req.query.participant_id;
+    if (!participant_id || typeof participant_id !== "string") {
+      return res.status(400).json({ error: "Укажите participant_id в query" });
+    }
+    const rows = await listMyOffers(participant_id);
+    res.json(rows);
+  } catch (e) {
+    sendError(res, "GET /my-offers", e);
   }
 });
 

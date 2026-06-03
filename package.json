@@ -5,11 +5,14 @@
   "type": "commonjs",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "node scripts/migrate.mjs && node dist/server.js",
     "dev": "ts-node server.ts",
-    "db:migrate": "node scripts/apply-migration.mjs"
+    "migrate": "node scripts/migrate.mjs",
+    "db:migrate": "npm run migrate",
+    "db:check": "node scripts/db-check.mjs"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "pg": "^8.13.1",
@@ -17,6 +20,7 @@
     "typescript": "^5.7.2"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.2",
