@@ -11,7 +11,7 @@ const offer_service_1 = require("./offer.service");
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
-app.use(express_1.default.static(path_1.default.join(__dirname, "public")));
+app.use(express_1.default.static(path_1.default.join(__dirname, "..", "public")));
 app.post("/offer/publish", async (req, res) => { const r = await offer_service_1.OfferService.publishOffer(req.body); res.status(r.ok ? 200 : 400).json(r); });
 app.post("/offer/update", async (req, res) => { const r = await offer_service_1.OfferService.updateOffer(req.body); res.status(r.ok ? 200 : 400).json(r); });
 app.post("/offer/withdraw", async (req, res) => { const r = await offer_service_1.OfferService.withdrawOffer(req.body.offerId); res.status(r.ok ? 200 : 400).json(r); });

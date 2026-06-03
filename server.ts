@@ -6,7 +6,7 @@ import { OfferService } from "./offer.service";
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "..", "public")));
 app.post("/offer/publish", async (req, res) => { const r = await OfferService.publishOffer(req.body); res.status(r.ok ? 200 : 400).json(r); });
 app.post("/offer/update", async (req, res) => { const r = await OfferService.updateOffer(req.body); res.status(r.ok ? 200 : 400).json(r); });
 app.post("/offer/withdraw", async (req, res) => { const r = await OfferService.withdrawOffer(req.body.offerId); res.status(r.ok ? 200 : 400).json(r); });
