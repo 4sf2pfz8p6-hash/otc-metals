@@ -2,7 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.pool = void 0;
 const pg_1 = require("pg");
+const connectionString = process.env.DATABASE_URL;
+const useSsl = process.env.PGSSLMODE === "require" ||
+    (connectionString?.includes("supabase.co") ?? false);
 exports.pool = new pg_1.Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
+    connectionString,
+    ...(useSsl ? { ssl: { rejectUnauthorized: false } } : {}),
 });

@@ -15,5 +15,19 @@ app.use(express_1.default.static(path_1.default.join(__dirname, "..", "public"))
 app.post("/offer/publish", async (req, res) => { const r = await offer_service_1.OfferService.publishOffer(req.body); res.status(r.ok ? 200 : 400).json(r); });
 app.post("/offer/update", async (req, res) => { const r = await offer_service_1.OfferService.updateOffer(req.body); res.status(r.ok ? 200 : 400).json(r); });
 app.post("/offer/withdraw", async (req, res) => { const r = await offer_service_1.OfferService.withdrawOffer(req.body.offerId); res.status(r.ok ? 200 : 400).json(r); });
-app.get("/offers", async (_req, res) => { const r = await db_1.pool.query(`SELECT offer_id, state, price, volume, metal, last_version FROM projection.offers_state ORDER BY last_version DESC`); res.json({ ok: true, offers: r.rows }); });
-app.listen(3000, () => console.log("API running on http://localhost:3000"));
+app.get("/offers", async (_req, res) => {
+    try {
+        const r = await db_1.pool.query(`SELECT offer_id, metal, side, price_rub_per_gram, volume_grams, region, purity, participant_type, rating, status, created_at
+       FROM projection.offers_state
+       WHERE status = 'active'
+       ORDER BY created_at DESC`);
+        res.json(r.rows);
+    }
+    catch (e) {
+        const message = e instanceof Error ? e.message : String(e);
+        console.error("GET /offers:", message);
+        res.status(500).json({ error: message });
+    }
+});
+const port = Number(process.env.PORT) || 3000;
+app.listen(port, () => console.log(`API running on port ${port}`));

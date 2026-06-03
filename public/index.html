@@ -54,19 +54,44 @@
 
 <script>
 const API = "";
-async function load() {
-  const r = await fetch(API + "/offers");
-  const d = await r.json();
-  const rows = d.offers.map(o => `
+let offers = [];
+
+async function loadOffers() {
+  try {
+    const res = await fetch(API + "/offers");
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    if (!Array.isArray(data)) throw new Error("Ожидался массив офферов");
+    offers = data.map(o => ({
+      id: o.offer_id,
+      metal: o.metal,
+      type: o.side,
+      price: parseFloat(o.price_rub_per_gram),
+      volume: parseFloat(o.volume_grams),
+      region: o.region || "—",
+      rating: o.rating || 90,
+      status: o.status || "active",
+      time: new Date(o.created_at).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" }),
+    }));
+    renderRows(offers);
+  } catch (e) {
+    console.error("Ошибка загрузки офферов:", e);
+    document.getElementById("rows").innerHTML =
+      '<tr><td colspan="6" style="color:#f87171">Не удалось загрузить офферы</td></tr>';
+  }
+}
+
+function renderRows(list) {
+  const rows = list.map(o => `
     <tr>
-      <td class="id">${o.offer_id.slice(0,8)}</td>
+      <td class="id">${String(o.id).slice(0, 8)}</td>
       <td>${o.metal ?? "—"}</td>
-      <td>${o.price ?? "—"}</td>
-      <td>${o.volume ?? "—"}</td>
-      <td><span class="badge ${o.state}">${o.state}</span></td>
-      <td>${o.state === "active" ? `<button onclick="withdraw('${o.offer_id}')" style="background:#2c323d;color:#e6e8eb;padding:5px 12px;">Снять</button>` : ""}</td>
+      <td>${Number.isFinite(o.price) ? o.price : "—"}</td>
+      <td>${Number.isFinite(o.volume) ? o.volume : "—"}</td>
+      <td><span class="badge ${o.status}">${o.status}</span></td>
+      <td>${o.status === "active" ? `<button onclick="withdraw('${o.id}')" style="background:#2c323d;color:#e6e8eb;padding:5px 12px;">Снять</button>` : ""}</td>
     </tr>`).join("");
-  document.getElementById("rows").innerHTML = rows;
+  document.getElementById("rows").innerHTML = rows || '<tr><td colspan="6" style="color:#8a909a">Пока нет активных офферов</td></tr>';
 }
 async function publish() {
   const body = {
@@ -78,13 +103,13 @@ async function publish() {
   const r = await fetch(API + "/offer/publish", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(body) });
   const d = await r.json();
   document.getElementById("msg").textContent = d.ok ? "Опубликовано, версия " + d.version : "Ошибка: " + d.error;
-  load();
+  loadOffers();
 }
 async function withdraw(id) {
   await fetch(API + "/offer/withdraw", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ offerId: id }) });
-  load();
+  loadOffers();
 }
-load();
+loadOffers();
 </script>
 </body>
 </html>
