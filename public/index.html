@@ -321,7 +321,7 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding:40px 0
 .big-btn .bb-title{font-weight:800;font-size:16px;letter-spacing:-.01em}
 .big-btn .bb-desc{font-weight:500;font-size:12px;color:var(--muted);line-height:1.35}
 .big-btn:hover{transform:translateY(-2px);border-color:var(--gold-soft);box-shadow:var(--shadow-lg)}
-.bb-place{background:var(--surface);border-color:var(--gold);color:var(--gold);justify-content:center}
+.bb-place{background:var(--surface);border-color:var(--gold);color:var(--gold)}
 .bb-place svg{stroke:var(--gold)}
 .bb-place .bb-title{color:var(--gold)}
 .bb-place:hover{background:var(--gold-bg)}
@@ -486,19 +486,20 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding:40px 0
     <div class="subline">Закрытая система для проверенных участников рынка</div>
 
     <div class="three-btns">
-      <button class="big-btn bb-buy" onclick="openMarket('sell')">
+      <button class="big-btn bb-buy" onclick="openMarket('buy')">
         <svg viewBox="0 0 24 24"><path d="M12 3v18M5 12l7 7 7-7"/></svg>
-        <span class="bb-title">Купить</span>
-        <span class="bb-desc">Найти предложения на покупку</span>
+        <span class="bb-title">Покупатели</span>
+        <span class="bb-desc">Участники, размещающие заявки на покупку</span>
       </button>
-      <button class="big-btn bb-sell" onclick="openMarket('buy')">
+      <button class="big-btn bb-sell" onclick="openMarket('sell')">
         <svg viewBox="0 0 24 24"><path d="M12 21V3M5 12l7-7 7 7"/></svg>
-        <span class="bb-title">Продать</span>
-        <span class="bb-desc">Разместить заявку на продажу</span>
+        <span class="bb-title">Продавцы</span>
+        <span class="bb-desc">Участники, размещающие заявки на продажу</span>
       </button>
       <button class="big-btn bb-place" onclick="needAuth('create')">
         <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
         <span class="bb-title">Разместить</span>
+        <span class="bb-desc">Создать ордер на покупку или продажу</span>
       </button>
     </div>
 
