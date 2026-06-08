@@ -122,5 +122,76 @@ app.get("/my-offers", async (req, res) => {
         (0, errors_1.sendError)(res, "GET /my-offers", e);
     }
 });
+const deals_service_1 = require("./deals.service");
+app.post("/deal/interest", async (req, res) => { try {
+    const { offer_id, participant_id } = req.body ?? {};
+    if (!offer_id || !participant_id)
+        return res.status(400).json({ ok: false, error: "need offer_id and participant_id" });
+    const r = await (0, deals_service_1.createInterest)(offer_id, participant_id);
+    res.json({ ok: true, ...r });
+}
+catch (e) {
+    res.status(400).json({ ok: false, error: e instanceof Error ? e.message : "err" });
+} });
+app.get("/offer/current-candidate", async (req, res) => { try {
+    const r = await (0, deals_service_1.currentCandidate)(String(req.query.offer_id || ""), String(req.query.participant_id || ""));
+    res.json({ ok: true, ...r });
+}
+catch (e) {
+    res.status(400).json({ ok: false, error: e instanceof Error ? e.message : "err" });
+} });
+app.post("/deal/respond", async (req, res) => { try {
+    const { deal_id, participant_id, action } = req.body ?? {};
+    const r = await (0, deals_service_1.respondToCandidate)(deal_id, participant_id, action);
+    res.json({ ok: true, ...r });
+}
+catch (e) {
+    res.status(400).json({ ok: false, error: e instanceof Error ? e.message : "err" });
+} });
+app.post("/deal/reveal", async (req, res) => { try {
+    const { deal_id, participant_id } = req.body ?? {};
+    const r = await (0, deals_service_1.revealContacts)(deal_id, participant_id);
+    res.json({ ok: true, ...r });
+}
+catch (e) {
+    res.status(400).json({ ok: false, error: e instanceof Error ? e.message : "err" });
+} });
+app.get("/deal/contacts", async (req, res) => { try {
+    const r = await (0, deals_service_1.getContacts)(String(req.query.deal_id || ""), String(req.query.participant_id || ""));
+    res.json({ ok: true, ...r });
+}
+catch (e) {
+    res.status(400).json({ ok: false, error: e instanceof Error ? e.message : "err" });
+} });
+app.post("/deal/result", async (req, res) => { try {
+    const { deal_id, participant_id, result } = req.body ?? {};
+    const r = await (0, deals_service_1.setResult)(deal_id, participant_id, result);
+    res.json({ ok: true, ...r });
+}
+catch (e) {
+    res.status(400).json({ ok: false, error: e instanceof Error ? e.message : "err" });
+} });
+app.get("/my-deals", async (req, res) => { try {
+    const r = await (0, deals_service_1.listMyDeals)(String(req.query.participant_id || ""));
+    res.json({ ok: true, deals: r });
+}
+catch (e) {
+    res.status(400).json({ ok: false, error: e instanceof Error ? e.message : "err" });
+} });
+app.get("/notifications", async (req, res) => { try {
+    const r = await (0, deals_service_1.listNotifications)(String(req.query.participant_id || ""));
+    res.json({ ok: true, notifications: r });
+}
+catch (e) {
+    res.status(400).json({ ok: false, error: e instanceof Error ? e.message : "err" });
+} });
+app.post("/notification/read", async (req, res) => { try {
+    const { notif_id, participant_id } = req.body ?? {};
+    const r = await (0, deals_service_1.markNotificationRead)(notif_id, participant_id);
+    res.json({ ok: true, ...r });
+}
+catch (e) {
+    res.status(400).json({ ok: false, error: e instanceof Error ? e.message : "err" });
+} });
 const port = Number(process.env.PORT) || 3000;
 app.listen(port, () => console.log(`API running on port ${port}`));
