@@ -5,7 +5,8 @@
   "type": "commonjs",
   "scripts": {
     "build": "tsc",
-    "start": "node scripts/migrate.mjs && node dist/server.js",
+    "start": "node dist/server.js",
+    "start:migrate": "node scripts/migrate.mjs && node dist/server.js",
     "dev": "ts-node server.ts",
     "migrate": "node scripts/migrate.mjs",
     "db:migrate": "npm run migrate",
