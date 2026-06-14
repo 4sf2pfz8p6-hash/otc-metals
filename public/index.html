@@ -180,6 +180,10 @@ main{background:transparent}
 .st-executed{background:var(--gold-bg);color:var(--gold)}
 .cell-price{font-weight:700;font-size:15px;font-variant-numeric:tabular-nums}
 .cell-price .u{font-size:11px;color:var(--muted);font-weight:600}
+.price-ref{display:block;font-size:11px;color:var(--muted);font-weight:700;margin-top:3px;line-height:1.25}
+.price-ref.down{color:var(--green)}
+.price-ref.up{color:var(--red)}
+.ref-base{display:block;font-size:10.5px;color:var(--muted);font-weight:600;margin-top:1px}
 .cell-vol{font-weight:600;font-variant-numeric:tabular-nums}
 .cell-vol .u{font-size:11px;color:var(--muted)}
 .party{display:flex;flex-direction:column;gap:3px}
@@ -391,6 +395,7 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding:40px 0
 .ord-card .oc-meta{font-size:12.5px;color:var(--muted)}
 .ord-card .oc-right{text-align:right}
 .ord-card .oc-price{font-weight:700;font-size:16px;font-variant-numeric:tabular-nums}
+.ord-card .oc-ref{font-size:11px;color:var(--muted);font-weight:700;margin-top:2px}
 .ord-card .oc-vol{font-size:12px;color:var(--muted)}
 .qstats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px}
 .qstat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center;box-shadow:var(--shadow)}
@@ -749,9 +754,14 @@ footer{ flex-shrink:0; }
 	    </div>
 	    <div class="form-hint" id="formHint">Проба и форма металла синхронизируются автоматически.</div>
     <div class="frow">
-      <div class="field"><label>Цена, ₽/г</label><input class="inp" id="n-price" type="number" placeholder="9150"></div>
+      <div class="field"><label>Модель цены</label><select id="n-price-mode" onchange="updateReferencePrice()"><option value="manual">Фиксированная ₽/г</option><option value="reference">От биржевой цены</option></select></div>
+      <div class="field"><label>Дисконт / премия, %</label><input class="inp" id="n-price-delta" type="number" step="0.1" placeholder="-2" oninput="updateReferencePrice()"></div>
+    </div>
+    <div class="frow">
+      <div class="field"><label>Итоговая цена, ₽/г</label><input class="inp" id="n-price" type="number" placeholder="9150"></div>
       <div class="field"><label>Объём, кг</label><input class="inp" id="n-vol" type="number" placeholder="10"></div>
     </div>
+    <div class="form-hint" id="priceHint">Можно указать фиксированную цену или дисконт к справочной биржевой цене.</div>
     <div class="frow">
       <div class="field"><label>Минимальная партия, кг</label><input class="inp" id="n-minlot" type="number" placeholder="необязательно"></div>
       <div class="field"><label>Способ расчёта</label><select id="n-payment"><option value="Безналичный">Безналичный</option><option value="Наличный">Наличный</option><option value="Оба варианта">Оба варианта</option></select></div>
@@ -844,6 +854,39 @@ function quotePrice(metal,purity){
   return q.base*k;
 }
 function fmtQ(v,metal){return (metal==='gold'||metal==='rhodium'||metal==='platinum'||metal==='palladium')?Math.round(v).toLocaleString('ru-RU'):v.toLocaleString('ru-RU',{minimumFractionDigits:1,maximumFractionDigits:1});}
+function referencePrice(metal,purity){return quotePrice(metal,purity||METALS[metal]?.pu);}
+function priceFromReference(metal,purity,deltaPct){
+  const base=referencePrice(metal,purity);
+  return base?base*(1+(parseFloat(deltaPct)||0)/100):0;
+}
+function roundPrice(v,metal){return (metal==='silver')?Math.round(v*10)/10:Math.round(v);}
+function priceDeltaPct(o){
+  if(o.priceDeltaPct!=null){
+    const explicit=parseFloat(o.priceDeltaPct);
+    if(!Number.isNaN(explicit))return explicit;
+  }
+  const base=referencePrice(o.metal,o.purity);
+  if(!base||!o.price)return null;
+  return ((o.price-base)/base)*100;
+}
+function fmtPct(v){
+  if(v==null||Number.isNaN(v))return '';
+  const n=Math.round(v*10)/10;
+  return `${n>0?'+':''}${n.toLocaleString('ru-RU',{maximumFractionDigits:1})}%`;
+}
+function priceRefHtml(o){
+  const delta=priceDeltaPct(o);
+  const base=referencePrice(o.metal,o.purity);
+  if(delta==null||!base)return '';
+  const cls=delta<0?'down':delta>0?'up':'';
+  return `<span class="price-ref ${cls}">${fmtPct(delta)} к бирже</span><span class="ref-base">биржа ${fmt(roundPrice(base,o.metal),o.metal)} ₽/г</span>`;
+}
+function priceRefText(o){
+  const delta=priceDeltaPct(o);
+  const base=referencePrice(o.metal,o.purity);
+  if(delta==null||!base)return '—';
+  return `${fmtPct(delta)} к бирже · база ${fmt(roundPrice(base,o.metal),o.metal)} ₽/г`;
+}
 
 function fillQuoteStrip(){
   const box=document.getElementById('qsInner');if(!box)return;
@@ -1054,7 +1097,7 @@ function dealCreateInterest(offer){
   deals.push({
     deal_id:uid(), offer_id:offer.id, owner_id:offer.participant_id||('owner-'+offer.id),
     responder_id:currentUser.id, responder_type:currentUser.type,
-    owner_type:offer.ptype, offer_snapshot:{metal:offer.metal,side:offer.side,price:offer.price,volume:offer.volume,purity:offer.purity,region:offer.region,location:offer.location,vat:offer.vat,urgency:offer.urgency,form:offer.form},
+    owner_type:offer.ptype, offer_snapshot:{metal:offer.metal,side:offer.side,price:offer.price,priceMode:offer.priceMode,priceDeltaPct:offer.priceDeltaPct,exchangeReferencePrice:offer.exchangeReferencePrice,volume:offer.volume,purity:offer.purity,region:offer.region,location:offer.location,vat:offer.vat,urgency:offer.urgency,form:offer.form},
     status:'interest_sent', owner_reveal:false, responder_reveal:false,
     owner_result:null, responder_result:null, created_at:nowISO(), is_active:false
   });
@@ -1144,23 +1187,26 @@ async function dealResult(dealId,result){
 
 // демо-данные (показываются пока база пустая)
 let offers=[
- {id:1,metal:'gold',side:'sell',price:9150,volume:15,region:'Москва',ptype:'affinage',rating:98,deals:145,time:'14:28'},
- {id:2,metal:'gold',side:'buy',price:9155,volume:8,region:'Санкт-Петербург',ptype:'bank',rating:95,deals:312,time:'14:31'},
- {id:3,metal:'silver',side:'sell',price:101.5,volume:120,region:'Москва',ptype:'jewelry',rating:100,deals:88,time:'14:20'},
- {id:4,metal:'gold',side:'sell',price:9148,volume:3,region:'Екатеринбург',ptype:'pawnshop',rating:87,deals:24,time:'14:15'},
- {id:5,metal:'platinum',side:'buy',price:3245,volume:2,region:'Москва',ptype:'wholesale',rating:92,deals:61,time:'14:10'},
- {id:6,metal:'gold',side:'buy',price:9152,volume:25,region:'Москва',ptype:'buyer',rating:99,deals:203,time:'14:05'},
- {id:7,metal:'palladium',side:'sell',price:5820,volume:1.5,region:'Санкт-Петербург',ptype:'wholesale',rating:91,deals:47,time:'13:58'},
- {id:8,metal:'silver',side:'buy',price:101.2,volume:500,region:'Екатеринбург',ptype:'jewelry',rating:96,deals:130,time:'13:50'},
- {id:9,metal:'platinum',side:'sell',price:3238,volume:5,region:'Москва',ptype:'affinage',rating:88,deals:39,time:'13:45'},
- {id:10,metal:'gold',side:'sell',price:9160,volume:50,region:'Новосибирск',ptype:'bank',rating:94,deals:178,time:'13:40'},
- {id:11,metal:'rhodium',side:'sell',price:18500,volume:0.5,region:'Москва',ptype:'wholesale',rating:93,deals:52,time:'13:30'},
+ {id:1,metal:'gold',side:'sell',price:9150,priceMode:'reference',priceDeltaPct:-2,volume:15,region:'Москва',ptype:'affinage',rating:98,deals:145,time:'14:28'},
+ {id:2,metal:'gold',side:'buy',price:9155,priceMode:'reference',priceDeltaPct:-1.5,volume:8,region:'Санкт-Петербург',ptype:'bank',rating:95,deals:312,time:'14:31'},
+ {id:3,metal:'silver',side:'sell',price:101.5,priceMode:'reference',priceDeltaPct:-3,volume:120,region:'Москва',ptype:'jewelry',rating:100,deals:88,time:'14:20'},
+ {id:4,metal:'gold',side:'sell',price:9148,priceMode:'reference',priceDeltaPct:-2.7,volume:3,region:'Екатеринбург',ptype:'pawnshop',rating:87,deals:24,time:'14:15'},
+ {id:5,metal:'platinum',side:'buy',price:3245,priceMode:'reference',priceDeltaPct:+0.5,volume:2,region:'Москва',ptype:'wholesale',rating:92,deals:61,time:'14:10'},
+ {id:6,metal:'gold',side:'buy',price:9152,priceMode:'reference',priceDeltaPct:-2.2,volume:25,region:'Москва',ptype:'buyer',rating:99,deals:203,time:'14:05'},
+ {id:7,metal:'palladium',side:'sell',price:5820,priceMode:'reference',priceDeltaPct:-2.5,volume:1.5,region:'Санкт-Петербург',ptype:'wholesale',rating:91,deals:47,time:'13:58'},
+ {id:8,metal:'silver',side:'buy',price:101.2,priceMode:'reference',priceDeltaPct:-1.8,volume:500,region:'Екатеринбург',ptype:'jewelry',rating:96,deals:130,time:'13:50'},
+ {id:9,metal:'platinum',side:'sell',price:3238,priceMode:'reference',priceDeltaPct:-1.2,volume:5,region:'Москва',ptype:'affinage',rating:88,deals:39,time:'13:45'},
+ {id:10,metal:'gold',side:'sell',price:9160,priceMode:'reference',priceDeltaPct:+0.4,volume:50,region:'Новосибирск',ptype:'bank',rating:94,deals:178,time:'13:40'},
+ {id:11,metal:'rhodium',side:'sell',price:18500,priceMode:'reference',priceDeltaPct:-1,volume:0.5,region:'Москва',ptype:'wholesale',rating:93,deals:52,time:'13:30'},
 ];
 // обогащаем демо-ордеры паспортными полями (для показа полного паспорта без сервера)
 const _payments=['Безналичный','Наличный','Оба варианта'];
 const _forms=['Слитки','Гранулы','Лом','Монеты'];
 offers.forEach((o,i)=>{
   o.purity=o.purity||METALS[o.metal].pu;
+  if(o.priceMode==='reference' && o.priceDeltaPct!=null){
+    o.price=roundPrice(priceFromReference(o.metal,o.purity,o.priceDeltaPct),o.metal);
+  }
   o.form=o.form||_forms[i%_forms.length];
   o.vat=o.vat||(i%2? 'with':'without');
   o.payment=o.payment||_payments[i%3];
@@ -1229,6 +1275,7 @@ function render(){
     if(sideFilter&&o.side!==sideFilter)return false;
     return true;
   });
+  list=list.sort((a,b)=>sideFilter==='buy' ? b.price-a.price : a.price-b.price);
   const tb=document.getElementById('tbody');
   const updEl=document.getElementById('upd'); if(updEl) updEl.textContent=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
   if(!list.length){tb.innerHTML='<div class="empty"><div class="ic">◇</div>Нет предложений по выбранным фильтрам</div>';return;}
@@ -1236,7 +1283,7 @@ function render(){
     <div class="tbl-row" onclick="openInterest('${o.id}')">
       <div class="cell-metal"><div class="metal-chip ${m.cls}">${m.ic}</div><div><div class="nm">${m.nm}</div><div class="pu">${o.purity||m.pu}</div></div></div>
       <div class="cell-side"><span class="badge ${buy?'b-buy':'b-sell'}">${buy?'ПОКУПКА':'ПРОДАЖА'}</span>${exp}</div>
-      <div class="cell-price">${fmt(o.price,o.metal)} <span class="u">₽/г</span></div>
+      <div class="cell-price">${fmt(o.price,o.metal)} <span class="u">₽/г</span>${priceRefHtml(o)}</div>
       <div class="cell-vol">${o.volume} <span class="u">кг</span></div>
       <div class="cell-region">${o.location||o.region}</div>
       <div class="cell-party"><div class="party"><div class="type">${TYPES[o.ptype]||'Участник'}</div><div class="rate"><div class="rate-bar"><div class="rate-fill" style="width:${o.rating}%"></div></div><span class="rate-txt">${o.rating}%</span></div><div class="deals">${o.deals} сделок</div></div></div>
@@ -1257,6 +1304,8 @@ function renderAnalytics(){
     if(!all.length)return `<div class="an-card"><div class="ttl"><div class="metal-chip ${METALS[d.m].cls}">${METALS[d.m].ic}</div>${d.nm}</div><div style="color:var(--muted);font-size:14px">Нет активных предложений</div></div>`;
     const bestBuy=buys.length?Math.max(...buys):'—', bestSell=sells.length?Math.min(...sells):'—';
     const avg=(all.reduce((a,b)=>a+b,0)/all.length);
+    const deltas=rel.map(priceDeltaPct).filter(x=>x!=null&&!Number.isNaN(x));
+    const avgDelta=deltas.length?deltas.reduce((a,b)=>a+b,0)/deltas.length:null;
     const min=Math.min(...all),max=Math.max(...all);
     const pos=max>min?((avg-min)/(max-min)*100):50;
     return `<div class="an-card">
@@ -1265,6 +1314,7 @@ function renderAnalytics(){
         <div class="an-r"><span class="k">Лучшая покупка</span><span class="v up">${bestBuy==='—'?'—':fmt(bestBuy,d.m)+' ₽/г'}</span></div>
         <div class="an-r"><span class="k">Лучшая продажа</span><span class="v down">${bestSell==='—'?'—':fmt(bestSell,d.m)+' ₽/г'}</span></div>
         <div class="an-r"><span class="k">Средняя цена</span><span class="v">${fmt(Math.round(avg*10)/10,d.m)} ₽/г</span></div>
+        <div class="an-r"><span class="k">Среднее к бирже</span><span class="v">${avgDelta==null?'—':fmtPct(avgDelta)}</span></div>
         <div class="an-r"><span class="k">Диапазон рынка</span><span class="v">${fmt(min,d.m)}–${fmt(max,d.m)}</span></div>
       </div>
       <div class="an-pos">
@@ -1358,7 +1408,7 @@ function renderCabOffers(box){
     <div class="myoffer">
 	      <div class="l"><div class="metal-chip ${m.cls}">${m.ic}</div>
 	        <div class="info"><div class="nm">${m.nm} ${o.purity||m.pu} · <span class="badge ${buy?'b-buy':'b-sell'}">${buy?'ПОКУПКА':'ПРОДАЖА'}</span> ${o.placementType==='auction'?'<span class="badge badge-auction">АУКЦИОН</span>':''} <span class="badge ${stt==='draft'?'badge-draft':'st-'+stt}">${STATUS_LABEL[stt]||stt}</span></div>
-        <div class="meta">${fmt(o.price,o.metal)} ₽/г · ${o.volume} кг · ${o.location||o.region}${expTxt?' · '+expTxt:''}</div></div></div>
+        <div class="meta">${fmt(o.price,o.metal)} ₽/г · ${priceRefText(o)} · ${o.volume} кг · ${o.location||o.region}${expTxt?' · '+expTxt:''}</div></div></div>
       <div class="acts">${acts}</div>
     </div>${candLine}</div>`;}).join('');
 }
@@ -1533,6 +1583,23 @@ function openAuth(t){document.getElementById('ovAuth').classList.add('open');swi
 	    if(preferred && purities.includes(preferred))ps.value=preferred;
 	  }
 	  syncMetalFormByPurity();
+	  updateReferencePrice();
+	}
+	function updateReferencePrice(){
+	  const metal=val('n-metal')||'gold';
+	  const purity=val('n-purity')||METALS[metal]?.pu;
+	  const mode=val('n-price-mode')||'manual';
+	  const delta=parseFloat(val('n-price-delta'));
+	  const base=referencePrice(metal,purity);
+	  const priceEl=document.getElementById('n-price');
+	  const hint=document.getElementById('priceHint');
+	  if(mode==='reference' && base && !Number.isNaN(delta)){
+	    const price=roundPrice(priceFromReference(metal,purity,delta),metal);
+	    if(priceEl)priceEl.value=price;
+	    if(hint)hint.textContent=`Биржевая база ${fmt(roundPrice(base,metal),metal)} ₽/г · итог ${fmt(price,metal)} ₽/г · ${fmtPct(delta)} к бирже.`;
+	  }else if(hint && base){
+	    hint.textContent=`Справочная биржевая база: ${fmt(roundPrice(base,metal),metal)} ₽/г. Для дисконта выберите «От биржевой цены» и укажите процент.`;
+	  }
 	}
 	function setFormOptions(items,selected){
 	  const fs=document.getElementById('n-form'); if(!fs)return;
@@ -1578,6 +1645,7 @@ function openAuth(t){document.getElementById('ovAuth').classList.add('open');swi
 	      if(hint)hint.textContent='Проба и форма металла синхронизируются автоматически.';
 	    }
 	  }
+	  updateReferencePrice();
 	}
 function closeOv(id){document.getElementById(id).classList.remove('open');}
 
@@ -1633,6 +1701,8 @@ async function doLogin(){
 	  const metal=val('n-metal'),side=val('n-side'),price=parseFloat(val('n-price')),volume=parseFloat(val('n-vol'));
 	  const region=val('n-region'),purity=val('n-purity'),kind=val('n-kind'),form=val('n-form'),vat=val('n-vat'),urgency=val('n-urgency'),comment=val('n-comment');
 	  const minlot=parseFloat(val('n-minlot'))||null, payment=val('n-payment'), expiryDays=parseInt(val('n-expiry'))||7;
+	  const priceMode=val('n-price-mode')||'manual', priceDeltaPct=parseFloat(val('n-price-delta'));
+	  const exchangeReferencePrice=roundPrice(referencePrice(metal,purity),metal);
 	  let location=val('n-location'); if(location==='Совпадает с регионом') location=region;
 	  if(!price||!volume){notify('Ошибка','Укажите цену и объём',true);return;}
 	  if(!currentUser){notify('Войдите','Размещать ордера могут только участники',true);openAuth('login');return;}
@@ -1657,6 +1727,9 @@ async function doLogin(){
     min_lot_grams: minlot? minlot*1000 : null,
     payment_method: payment,
     metal_location: location,
+    price_mode: priceMode,
+    price_delta_pct: Number.isNaN(priceDeltaPct)?null:priceDeltaPct,
+    exchange_reference_price: exchangeReferencePrice||null,
     expiry_days: expiryDays,
     expires_at: expiresAt.toISOString(),
 	    status:publishAllowed?'active':'draft'
@@ -1678,7 +1751,7 @@ async function doLogin(){
 	    go('cabinet');renderCabinet();render();
 	    notify('Ордер размещён','Сохранён и виден участникам рынка');
 	  }else{
-	    offers.unshift({id:Date.now(),metal,side,price,volume,region,purity,ptype:currentUser.type||'wholesale',participant_id:currentUser.id,vat,urgency,form:payload.metal_form,minlot,payment,location,expiresAt:expiresAt.toISOString(),status:publishAllowed?'active':'draft',placementType,deals:0,rating:currentUser.rating||90,time:now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}),real:false});
+	    offers.unshift({id:Date.now(),metal,side,price,priceMode,priceDeltaPct:Number.isNaN(priceDeltaPct)?null:priceDeltaPct,exchangeReferencePrice,volume,region,purity,ptype:currentUser.type||'wholesale',participant_id:currentUser.id,vat,urgency,form:payload.metal_form,minlot,payment,location,expiresAt:expiresAt.toISOString(),status:publishAllowed?'active':'draft',placementType,deals:0,rating:currentUser.rating||90,time:now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}),real:false});
 	    cabActiveTab='offers';
 	    document.querySelectorAll('.cab-mi[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab==='offers'));
 	    go('cabinet');renderCabinet();render();
@@ -1716,6 +1789,7 @@ function interestStep(n){
       <div class="di"><div class="dk">Металл</div><div class="dv">${m.nm} ${pur}</div></div>
       <div class="di"><div class="dk">Тип</div><div class="dv">${buy?'Покупка':'Продажа'}</div></div>
       <div class="di"><div class="dk">Цена</div><div class="dv">${fmt(o.price,o.metal)} ₽/г</div></div>
+      <div class="di"><div class="dk">К бирже</div><div class="dv">${priceRefText(o)}</div></div>
       <div class="di"><div class="dk">Объём</div><div class="dv">${o.volume} кг</div></div>
     </div>`;
     next.textContent='Интересно, показать условия →';
@@ -1795,6 +1869,9 @@ function normalizeOffer(o){
     metal:o.metal||'gold',
     side:o.side||'sell',
     price:price,
+    priceMode:o.price_mode||o.priceMode||'manual',
+    priceDeltaPct:o.price_delta_pct??o.priceDeltaPct??null,
+    exchangeReferencePrice:o.exchange_reference_price??o.exchangeReferencePrice??null,
     volume:volKg,
     region:o.region||'—',
     purity:o.purity||null,
