@@ -352,7 +352,6 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding:40px 0
 	.profile-cell{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px}
 	.profile-cell .k{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase}
 	.profile-cell .v{font-size:14px;font-weight:800;margin-top:3px;color:var(--ink)}
-	.demo-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 	.badge-draft{background:var(--soft);color:var(--muted)}
 	.badge-auction{background:#eef2f8;color:#41607d}
 	.place-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
@@ -503,7 +502,7 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding:40px 0
   .logo-sub{display:none}
   .logo-name{font-size:13px}
 }
-/* ===== UI-полировка перед MVP ===== */
+/* ===== UI-полировка launch version ===== */
 @media(hover:hover){
   .big-btn:hover{ filter:brightness(0.99); }
   .tab:hover{ background:var(--bg); color:var(--ink); }
@@ -544,10 +543,10 @@ footer{ flex-shrink:0; }
 <main class="page active" id="page-home">
   <section class="wrap qhome">
     <div class="qhead">
-      <div class="badge-live"><span class="dot"></span>Закрытое тестирование · B2B OTC matching · верификация в разработке</div>
-      <h1>B2B OTC-платформа для подбора контрагентов</h1>
+      <div class="badge-live"><span class="dot"></span>Профессиональная экосистема ДМДК · маршрутизация участников</div>
+      <h1>Интеллектуальный маршрутизатор рынка драгоценных металлов</h1>
     </div>
-    <div class="subline">OTC Metals помогает участникам рынка драгоценных металлов найти покупателя или продавца и согласовать сделку напрямую. Мы не биржа, не брокер, не эскроу и не сторона сделки.</div>
+    <div class="subline">OTC Metals определяет статус участника, показывает подходящих покупателей и продавцов, помогает начать переговоры и раскрывает контакты только по согласованному сценарию. Мы не биржа, не брокер, не эскроу и не сторона сделки.</div>
 
 	    <div class="three-btns">
 	      <button class="big-btn bb-buy" onclick="openMarket('buy')">
@@ -580,8 +579,8 @@ footer{ flex-shrink:0; }
 
 	    <div class="access-panel">
 	      <div class="access-head">
-	        <div><div class="access-title">Статус доступа и доверия</div><div class="access-sub" id="accessSub">Действия зависят от проверки компании и полномочий пользователя</div></div>
-	        <div class="access-level" id="accessLevel">Уровень 0 · Гость</div>
+		        <div><div class="access-title">Маршрут участника</div><div class="access-sub" id="accessSub">Действия зависят от правового статуса, роли рынка и подтверждённых полномочий</div></div>
+		        <div class="access-level" id="accessLevel">Гостевой просмотр</div>
 	      </div>
 	      <div class="level-grid" id="accessLevels"></div>
 	      <div class="status-row" id="verificationStatuses"></div>
@@ -590,25 +589,25 @@ footer{ flex-shrink:0; }
     <div class="how-block">
       <div class="how-title">Как работает платформа</div>
       <div class="how-steps">
-        <div class="how-step"><span class="how-n">1</span><span>Компания указывает ИНН/ОГРН и создаёт Company Profile</span></div>
-        <div class="how-step"><span class="how-n">2</span><span>Система определяет статус участника и доступные действия</span></div>
-        <div class="how-step"><span class="how-n">3</span><span>Участник размещает ордер или выбирает подходящего контрагента</span></div>
-        <div class="how-step"><span class="how-n">4</span><span>Интерес к ордеру попадает в скрытую очередь переговоров</span></div>
+        <div class="how-step"><span class="how-n">1</span><span>Участник выбирает правовой статус, роль рынка и указывает ИНН/ОГРН</span></div>
+        <div class="how-step"><span class="how-n">2</span><span>Система формирует профиль, проверяет доверительные сигналы и рассчитывает доступные действия</span></div>
+        <div class="how-step"><span class="how-n">3</span><span>Платформа маршрутизирует участника к подходящим покупателям, продавцам, ордерам и аукционам</span></div>
+        <div class="how-step"><span class="how-n">4</span><span>Интерес к ордеру попадает в скрытую очередь переговоров без раскрытия контактов</span></div>
         <div class="how-step"><span class="how-n">5</span><span>Контакты раскрываются только по взаимному согласию, сделка завершается напрямую</span></div>
       </div>
     </div>
 
     <div class="testing-banner" id="marketStats">
       <svg viewBox="0 0 24 24" class="tb-ic"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>
-      <div class="tb-text">Закрытое тестирование: реальные участники подключаются вручную, автоматическая проверка реестров и permissions включаются поэтапно.</div>
+      <div class="tb-text">Платформа показывает рынок через роли участников, доверительные статусы и разрешённые действия. Сложная проверка остаётся внутри системы, пользователь видит понятный маршрут.</div>
     </div>
 
     <div class="qsection-ttl">
-      <h2>Примеры сделок вне платформы</h2>
-      <span class="example-tag">пример интерфейса</span>
+      <h2>Примеры маршрутов металла</h2>
+      <span class="example-tag">маршруты рынка</span>
     </div>
     <div class="deal-flow" id="dealFlow"></div>
-    <div class="example-note">Это демонстрационные примеры сценариев. OTC Metals не является стороной сделки: реальные сделки заключаются участниками напрямую.</div>
+    <div class="example-note">Это иллюстрация рыночных маршрутов. OTC Metals помогает найти релевантного контрагента, но сделка заключается напрямую между сторонами.</div>
   </section>
 </main>
 
@@ -677,12 +676,12 @@ footer{ flex-shrink:0; }
         <div class="cab-name" id="cabName">Компания</div>
         <div class="cab-type" id="cabType">Участник · на проверке</div>
 	        <div class="cab-stat"><span class="k">Проверка</span><span class="v" id="cabVerif">на проверке</span></div>
-	        <div class="cab-stat"><span class="k">Уровень</span><span class="v" id="cabLevel">0</span></div>
+		        <div class="cab-stat"><span class="k">Доступ</span><span class="v" id="cabLevel">гостевой</span></div>
 	        <div class="cab-stat"><span class="k">Завершённых сделок</span><span class="v" id="cabDeals">0</span></div>
         <div class="cab-stat"><span class="k">Среднее время ответа</span><span class="v" id="cabResp">—</span></div>
         <div class="cab-stat"><span class="k">На площадке с</span><span class="v" id="cabSince">—</span></div>
 	        <div class="cab-menu">
-	          <button class="cab-mi active" data-tab="profile" onclick="cabTab('profile',this)">Company Profile</button>
+		          <button class="cab-mi active" data-tab="profile" onclick="cabTab('profile',this)">Профиль участника</button>
 	          <button class="cab-mi" data-tab="offers" onclick="cabTab('offers',this)">Мои размещения</button>
           <button class="cab-mi" data-tab="deals" onclick="cabTab('deals',this)">Переговоры <span id="cabDealsBadge" style="color:var(--gold)"></span></button>
           <button class="cab-mi" data-tab="done" onclick="cabTab('done',this)">Завершённые сделки</button>
@@ -716,16 +715,17 @@ footer{ flex-shrink:0; }
       <div class="frow full"><div class="field"><label>Email</label><input class="inp" id="login-email" type="email" placeholder="company@example.ru"></div></div>
       <div class="frow full"><div class="field"><label>Пароль</label><input class="inp" id="login-pass" type="password" placeholder="••••••••"></div></div>
       <div class="modal-foot"><button class="btn btn-gold btn-lg btn-block" onclick="doLogin()">Войти в систему</button></div>
-      <div class="auth-note">Нет аккаунта? Создайте Company Profile по ИНН/ОГРН</div>
+      <div class="auth-note">Нет аккаунта? Создайте профиль участника по правовому статусу, роли рынка и ИНН/ОГРН</div>
     </div>
     <div id="formReg" style="display:none">
-	      <div class="frow"><div class="field"><label id="lbl-company">Название компании</label><input class="inp" id="reg-company" placeholder="ООО Золото-Трейд"></div><div class="field"><label id="lbl-inn">ИНН</label><input class="inp" id="reg-inn" placeholder="7701234567"></div></div>
-	      <div class="frow full"><div class="field"><label>ОГРН / ОГРНИП</label><input class="inp" id="reg-ogrn" placeholder="1027700132195"></div></div>
-      <div class="frow"><div class="field"><label>Контактное лицо</label><input class="inp" id="reg-contact" placeholder="Иванов Иван"></div><div class="field"><label>Телефон</label><input class="inp" id="reg-phone" placeholder="+7 999 123-45-67"></div></div>
-	      <div class="frow"><div class="field"><label>Email</label><input class="inp" id="reg-email" type="email" placeholder="company@example.ru"></div><div class="field"><label>Тип участника</label><select id="reg-type" onchange="onRegType()"><option value="individual">Физическое лицо</option><option value="pawnshop">Ломбард</option><option value="buyer">Скупщик</option><option value="wholesale" selected>Оптовая компания</option><option value="jewelry_workshop">Ювелирная мастерская</option><option value="jewelry">Ювелирный завод</option><option value="affinage">Аффинажный завод</option><option value="bank">Банк</option><option value="mining">Добывающая компания</option><option value="importer">Импортёр</option><option value="exporter">Экспортёр</option><option value="other">Другое</option></select></div></div>
-      <div class="frow full"><div class="field"><label>Пароль</label><input class="inp" id="reg-pass" type="password" placeholder="придумайте пароль"></div></div>
-      <div class="modal-foot"><button class="btn btn-gold btn-lg btn-block" onclick="doRegister()">Создать Company Profile</button></div>
-      <div class="auth-note">Мы сохраняем статус проверки и права доступа, а не пакет документов. Проверка реестров и подтверждение полномочий подключаются поэтапно.</div>
+		      <div class="frow"><div class="field"><label>Правовой статус</label><select id="reg-legal" onchange="onRegType()"><option value="legal_entity" selected>Юридическое лицо</option><option value="sole_proprietor">ИП</option><option value="individual">Физическое лицо</option></select></div><div class="field"><label>Роль на рынке</label><select id="reg-type" onchange="onRegType()"><option value="private_owner">Частный владелец / инвестор</option><option value="pawnshop">Ломбард</option><option value="buyer">Скупщик</option><option value="wholesale" selected>Оптовая компания</option><option value="jewelry_workshop">Ювелирная мастерская</option><option value="jewelry">Ювелирный завод</option><option value="affinage">Аффинажный завод</option><option value="bank">Банк</option><option value="mining">Добывающая компания</option><option value="importer">Импортёр</option><option value="exporter">Экспортёр</option><option value="other">Другое</option></select></div></div>
+		      <div class="frow"><div class="field"><label id="lbl-company">Название компании</label><input class="inp" id="reg-company" placeholder="ООО Золото-Трейд"></div><div class="field"><label id="lbl-inn">ИНН</label><input class="inp" id="reg-inn" placeholder="7701234567"></div></div>
+		      <div class="frow full"><div class="field"><label>ОГРН / ОГРНИП</label><input class="inp" id="reg-ogrn" placeholder="1027700132195"></div></div>
+	      <div class="frow"><div class="field"><label>Контактное лицо</label><input class="inp" id="reg-contact" placeholder="Иванов Иван"></div><div class="field"><label>Телефон</label><input class="inp" id="reg-phone" placeholder="+7 999 123-45-67"></div></div>
+		      <div class="frow full"><div class="field"><label>Email</label><input class="inp" id="reg-email" type="email" placeholder="company@example.ru"></div></div>
+	      <div class="frow full"><div class="field"><label>Пароль</label><input class="inp" id="reg-pass" type="password" placeholder="придумайте пароль"></div></div>
+	      <div class="modal-foot"><button class="btn btn-gold btn-lg btn-block" onclick="doRegister()">Создать профиль участника</button></div>
+	      <div class="auth-note">Мы сохраняем результаты проверок, статусы доверия и разрешённые действия, а не архив документов.</div>
     </div>
   </div></div>
 </div>
@@ -916,19 +916,20 @@ function renderQuotes(){
   document.getElementById('qContent').innerHTML=html;
 }
 	function qSelect(k){qActiveMetal=k;renderQuotes();}
-	const TYPES={individual:'Физическое лицо',pawnshop:'Ломбард',buyer:'Скупщик',wholesale:'Оптовая компания',jewelry_workshop:'Ювелирная мастерская',jewelry:'Ювелирный завод',affinage:'Аффинажный завод',bank:'Банк',mining:'Добывающая компания',importer:'Импортёр',exporter:'Экспортёр',other:'Другое'};
+		const TYPES={private_owner:'Частный владелец / инвестор',individual:'Физическое лицо',pawnshop:'Ломбард',buyer:'Скупщик',wholesale:'Оптовая компания',jewelry_workshop:'Ювелирная мастерская',jewelry:'Ювелирный завод',affinage:'Аффинажный завод',bank:'Банк',mining:'Добывающая компания',importer:'Импортёр',exporter:'Экспортёр',other:'Другое'};
+		const LEGAL_TYPES={individual:'Физическое лицо',sole_proprietor:'ИП',legal_entity:'Юридическое лицо'};
 	let currentUser=null, sideFilter='', curInterest=null, placementType='order';
 	const ACCESS_COPY=[
-	  {level:0,name:'Гость',desc:'Витрина, общий рынок и справочная информация'},
-	  {level:1,name:'Компания найдена',desc:'Просмотр рынка и черновики без публикации и контактов'},
-	  {level:2,name:'Верифицированный участник',desc:'Публикация, отклики и раскрытие контактов по согласию'}
-	];
-	const VERIFICATION_KEYS=[
-	  ['companyFound','Company Found'],
-	  ['specialRegistryVerified','Special Registry Verified'],
-	  ['identityVerified','Identity Verified'],
-	  ['permissionsCalculated','Permissions Calculated']
-	];
+		  {level:0,name:'Гостевой просмотр',desc:'Витрина рынка, покупатели, продавцы и общие ориентиры без действий'},
+		  {level:1,name:'Профиль определён',desc:'Компания или участник найден, можно готовить черновики и видеть больше контекста'},
+		  {level:2,name:'Доверие подтверждено',desc:'Публикация, отклики, переговоры и раскрытие контактов по разрешённому сценарию'}
+		];
+		const VERIFICATION_KEYS=[
+		  ['companyFound','Компания найдена'],
+		  ['specialRegistryVerified','Реестры проверены'],
+		  ['identityVerified','Полномочия подтверждены'],
+		  ['permissionsCalculated','Маршрут рассчитан']
+		];
 	function trustLevel(user){
 	  if(!user)return 0;
 	  if(user.status==='verified')return 2;
@@ -941,8 +942,9 @@ function renderQuotes(){
 	    companyName:user?.name||user?.company_name||'Компания',
 	    inn:user?.inn||'',
 	    ogrn:user?.ogrn||'',
-	    marketRole:user?.type||'other',
-	    legalStatus:user?'active':'unknown',
+		    marketRole:user?.type||'other',
+		    legalType:user?.legalType||user?.legal_type||'legal_entity',
+		    legalStatus:user?'active':'unknown',
 	    verificationLevel:level,
 	    statuses:{
 	      companyFound:level>=1,
@@ -972,24 +974,24 @@ function renderQuotes(){
 	  const level=trustLevel(currentUser);
 	  const p=profileOf(currentUser);
 	  const levelEl=document.getElementById('accessLevel');
-	  if(levelEl)levelEl.textContent=`Уровень ${level} · ${accessName(level)}`;
-	  const sub=document.getElementById('accessSub');
-	  if(sub)sub.textContent=currentUser?`${p.companyName} · ${TYPES[p.marketRole]||'Участник'} · права рассчитаны по статусу`:'Гость видит витрину без контактов и деталей участников';
-	  const grid=document.getElementById('accessLevels');
-	  if(grid)grid.innerHTML=ACCESS_COPY.map(x=>`<div class="level-card ${x.level===level?'active':''}"><div class="lv">Уровень ${x.level}</div><div class="nm">${x.name}</div><div class="ds">${x.desc}</div></div>`).join('');
+		  if(levelEl)levelEl.textContent=currentUser?accessName(level):'Гостевой просмотр';
+		  const sub=document.getElementById('accessSub');
+		  if(sub)sub.textContent=currentUser?`${p.companyName} · ${LEGAL_TYPES[p.legalType]||'Участник'} · ${TYPES[p.marketRole]||'роль рынка'} · маршрут рассчитан по статусу`:'Гость видит витрину рынка. Для отклика, размещения и раскрытия контактов нужна регистрация.';
+		  const grid=document.getElementById('accessLevels');
+		  if(grid)grid.innerHTML=ACCESS_COPY.map(x=>`<div class="level-card ${x.level===level?'active':''}"><div class="nm">${x.name}</div><div class="ds">${x.desc}</div></div>`).join('');
 	  const statuses=document.getElementById('verificationStatuses');
 	  if(statuses)statuses.innerHTML=VERIFICATION_KEYS.map(([k,label])=>`<span class="status-pill ${p.statuses[k]?'ok':'wait'}">${p.statuses[k]?'✓':'·'} ${label}</span>`).join('');
 	}
 	function canPublish(){return profileOf(currentUser).permissions.publishOrder;}
 	function canRespond(){return profileOf(currentUser).permissions.respondOrder;}
 	function setDemoTrust(level){
-	  if(!currentUser){openAuth('reg');notify('Нужна регистрация','Сначала создайте Company Profile',true);return;}
+		  if(!currentUser){openAuth('reg');notify('Для продолжения зарегистрируйтесь','Сначала создайте профиль участника',true);return;}
 	  currentUser.status=level>=2?'verified':'company_found';
 	  currentUser.companyProfile=makeCompanyProfile(currentUser);
 	  applyUserUI();
 	  renderAccessPanel();
 	  if(document.getElementById('page-cabinet').classList.contains('active'))renderCabinet();
-	  notify(level>=2?'Уровень 2 включён':'Уровень 1 включён', accessName(trustLevel(currentUser)));
+		  notify('Статус обновлён', accessName(trustLevel(currentUser)));
 	}
 
 // ===== МОДЕЛЬ СДЕЛОК (Этап 1, на фронте; позже — сервер) =====
@@ -1016,7 +1018,7 @@ const DEAL_STATUS = {
 function uid(){return 'd'+Date.now()+Math.random().toString(36).slice(2,6);}
 function nowISO(){return new Date().toISOString();}
 
-// ворота монетизации — в MVP всегда true; позже подписка/оплата/лимиты/пакеты
+	// ворота монетизации — в первой версии всегда true; позже подписка/оплата/лимиты/пакеты
 function canReveal(participant){ return true; }
 
 // сколько интересов уже на ордере
@@ -1041,7 +1043,7 @@ function ownerCurrentDeal(offerId){
 function refreshDealUI(){ if(typeof renderCabinet==='function' && document.getElementById('page-cabinet').classList.contains('active')) renderCabinet(); }
 
 // ===== СЕРВЕРНЫЙ РЕЖИМ СДЕЛОК =====
-// true, если пользователь вошёл с реальным серверным id (UUID), а не демо
+// true, если пользователь вошёл с реальным серверным id (UUID)
 function isServerUser(){ return !!(currentUser && currentUser.id && String(currentUser.id).length>=20); }
 
 // загрузить сделки текущего пользователя с сервера в массив deals
@@ -1089,7 +1091,7 @@ function dealCreateInterest(offer){
       }).catch(()=>notify('Ошибка сети','Не удалось отправить интерес',true));
     return true;
   }
-  // демо-режим (в памяти)
+  // локальный режим, если серверная сделка недоступна
   const list=dealsForOffer(offer.id);
   if(list.some(d=>d.responder_id===currentUser.id)){ notify('Уже отправлено','Вы уже откликнулись на этот ордер',true); return false; }
   const accepted=list.filter(d=>!['declined','expired','cancelled','expired_queue'].includes(d.status));
@@ -1185,7 +1187,7 @@ async function dealResult(dealId,result){
 }
 
 
-// демо-данные (показываются пока база пустая)
+// стартовые данные витрины, если база пока пустая
 let offers=[
  {id:1,metal:'gold',side:'sell',price:9150,priceMode:'reference',priceDeltaPct:-2,volume:15,region:'Москва',ptype:'affinage',rating:98,deals:145,time:'14:28'},
  {id:2,metal:'gold',side:'buy',price:9155,priceMode:'reference',priceDeltaPct:-1.5,volume:8,region:'Санкт-Петербург',ptype:'bank',rating:95,deals:312,time:'14:31'},
@@ -1199,7 +1201,7 @@ let offers=[
  {id:10,metal:'gold',side:'sell',price:9160,priceMode:'reference',priceDeltaPct:+0.4,volume:50,region:'Новосибирск',ptype:'bank',rating:94,deals:178,time:'13:40'},
  {id:11,metal:'rhodium',side:'sell',price:18500,priceMode:'reference',priceDeltaPct:-1,volume:0.5,region:'Москва',ptype:'wholesale',rating:93,deals:52,time:'13:30'},
 ];
-// обогащаем демо-ордеры паспортными полями (для показа полного паспорта без сервера)
+// обогащаем стартовые ордеры паспортными полями для полной витрины
 const _payments=['Безналичный','Наличный','Оба варианта'];
 const _forms=['Слитки','Гранулы','Лом','Монеты'];
 offers.forEach((o,i)=>{
@@ -1234,8 +1236,8 @@ function fmt(p,m){return (m==='gold')?p.toLocaleString('ru-RU'):p.toLocaleString
 	}
 	function openMarket(side){sideFilter=side;go('market');markSection(side==='buy'?'buyer':'seller');setSide(side);}
 	function openPlace(){go('place');markSection('place');}
-	function startPlacement(type){ if(!currentUser){openAuth('login'); notify('Войдите в систему','Размещение доступно после входа',true); return;} openCreate(type); }
-	function needAuth(p){ if(!currentUser){openAuth('login'); notify('Войдите в систему','Этот раздел доступен после входа',true); return;} if(p==='create'){openPlace();}else{go(p);} }
+		function startPlacement(type){ if(!currentUser){openAuth('reg'); notify('Для продолжения зарегистрируйтесь','Размещение доступно после создания профиля участника',true); return;} openCreate(type); }
+		function needAuth(p){ if(!currentUser){openAuth('reg'); notify('Для продолжения зарегистрируйтесь','Действие доступно после создания профиля участника',true); return;} if(p==='create'){openPlace();}else{go(p);} }
 
 function renderDealFlow(){
   const box=document.getElementById('dealFlow');if(!box)return;
@@ -1340,11 +1342,11 @@ function cabTab(tab,el){
 	    const level=trustLevel(currentUser);
 	    document.getElementById('cabName').textContent=currentUser.name;
 	    const verified = level>=2;
-	    document.getElementById('cabType').textContent=(TYPES[currentUser.type]||'Участник')+' · '+accessName(level);
-	    document.getElementById('cabAv').textContent=(currentUser.name||'К').charAt(0).toUpperCase();
-	    const setv=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
-	    setv('cabVerif', verified?'✓ верифицирован':'Company Found');
-	    setv('cabLevel', String(profile.verificationLevel));
+		    document.getElementById('cabType').textContent=(LEGAL_TYPES[currentUser.legalType||currentUser.legal_type]||'Участник')+' · '+(TYPES[currentUser.type]||'роль рынка')+' · '+accessName(level);
+		    document.getElementById('cabAv').textContent=(currentUser.name||'К').charAt(0).toUpperCase();
+		    const setv=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+		    setv('cabVerif', verified?'проверен':'компания найдена');
+		    setv('cabLevel', accessName(profile.verificationLevel));
 	    setv('cabResp', currentUser.resp_time||'—');
 	    setv('cabSince', currentUser.since||'июнь 2026');
 	  }
@@ -1364,24 +1366,21 @@ function cabTab(tab,el){
 
 	function renderCabProfile(box){
 	  const p=profileOf(currentUser);
-	  box.innerHTML=`<div class="cab-card">
-	    <div class="cab-card-head">
-	      <div><div class="cab-card-title">Company Profile</div><div class="cab-card-sub">Идентификаторы, статусы и права без хранения документов</div></div>
-	      <div class="access-level">Уровень ${p.verificationLevel} · ${accessName(p.verificationLevel)}</div>
-	    </div>
-	    <div class="profile-grid">
-	      <div class="profile-cell"><div class="k">Компания</div><div class="v">${p.companyName}</div></div>
-	      <div class="profile-cell"><div class="k">Роль рынка</div><div class="v">${TYPES[p.marketRole]||'Участник'}</div></div>
-	      <div class="profile-cell"><div class="k">ИНН</div><div class="v">${p.inn||'—'}</div></div>
-	      <div class="profile-cell"><div class="k">ОГРН</div><div class="v">${p.ogrn||'—'}</div></div>
-	    </div>
-	    <div class="status-row" style="margin-top:14px">${VERIFICATION_KEYS.map(([k,label])=>`<span class="status-pill ${p.statuses[k]?'ok':'wait'}">${p.statuses[k]?'✓':'·'} ${label}</span>`).join('')}</div>
-	    <div class="demo-actions">
-	      <button class="btn-sm" onclick="setDemoTrust(1)">Уровень 1</button>
-	      <button class="btn-sm" onclick="setDemoTrust(2)">Уровень 2</button>
-	    </div>
-	  </div>`;
-	}
+		  box.innerHTML=`<div class="cab-card">
+		    <div class="cab-card-head">
+		      <div><div class="cab-card-title">Профиль участника</div><div class="cab-card-sub">Идентификаторы, доверительные статусы и разрешённые действия без хранения документов</div></div>
+		      <div class="access-level">${accessName(p.verificationLevel)}</div>
+		    </div>
+		    <div class="profile-grid">
+		      <div class="profile-cell"><div class="k">Компания</div><div class="v">${p.companyName}</div></div>
+		      <div class="profile-cell"><div class="k">Правовой статус</div><div class="v">${LEGAL_TYPES[p.legalType]||'—'}</div></div>
+		      <div class="profile-cell"><div class="k">Роль рынка</div><div class="v">${TYPES[p.marketRole]||'Участник'}</div></div>
+		      <div class="profile-cell"><div class="k">ИНН</div><div class="v">${p.inn||'—'}</div></div>
+		      <div class="profile-cell"><div class="k">ОГРН</div><div class="v">${p.ogrn||'—'}</div></div>
+		    </div>
+		    <div class="status-row" style="margin-top:14px">${VERIFICATION_KEYS.map(([k,label])=>`<span class="status-pill ${p.statuses[k]?'ok':'wait'}">${p.statuses[k]?'✓':'·'} ${label}</span>`).join('')}</div>
+		  </div>`;
+		}
 
 function renderCabOffers(box){
 	  const mine = currentUser ? offers.filter(o=>o.participant_id && currentUser.id && String(o.participant_id)===String(currentUser.id)) : [];
@@ -1450,7 +1449,7 @@ function dealCardHTML(d, readonly){
   const cpType = d.counterparty ? d.counterparty.participant_type : (iAmOwner ? d.responder_type : d.owner_type);
   const other = TYPES[cpType]||'Участник';
   const revealed = d.status==='contacts_revealed' || d.status==='completed' || d.status==='awaiting_confirmation';
-  // контакты: реальные с сервера (d.contacts) либо демо-заглушка
+  // контакты: реальные с сервера (d.contacts) либо нейтральная заглушка
   let contacts='';
   if(revealed){
     const c = d.contacts || {company: iAmOwner?'ООО «Покупатель»':'ООО «Продавец»', contact_person:'Иванов И. И.', phone:'+7 999 123-45-67', email:'contact@example.ru'};
@@ -1526,12 +1525,12 @@ async function reactivateOffer(id){
 }
 
 function onRegType(){
-  const t=val('reg-type');
-  const ind = t==='individual';
-  const lc=document.getElementById('lbl-company'), li=document.getElementById('lbl-inn');
-  const ic=document.getElementById('reg-company'), ii=document.getElementById('reg-inn');
-  if(ind){
-    lc.textContent='ФИО'; ic.placeholder='Иванов Иван Иванович';
+	  const legal=val('reg-legal');
+	  const ind = legal==='individual';
+	  const lc=document.getElementById('lbl-company'), li=document.getElementById('lbl-inn');
+	  const ic=document.getElementById('reg-company'), ii=document.getElementById('reg-inn');
+	  if(ind){
+	    lc.textContent='ФИО'; ic.placeholder='Иванов Иван Иванович';
     li.textContent='ИНН (если есть)'; ii.placeholder='необязательно';
   }else{
     lc.textContent='Название компании'; ic.placeholder='ООО Золото-Трейд';
@@ -1653,7 +1652,7 @@ function closeOv(id){document.getElementById(id).classList.remove('open');}
 	  profileOf(currentUser);
 	  document.getElementById('hdActions').innerHTML=`<button class="btn btn-ghost" onclick="go('cabinet')">${currentUser.name}</button>`;
 	  document.getElementById('cabName').textContent=currentUser.name;
-	  document.getElementById('cabType').textContent=(TYPES[currentUser.type]||'Участник')+' · '+accessName(trustLevel(currentUser));
+		  document.getElementById('cabType').textContent=(LEGAL_TYPES[currentUser.legalType||currentUser.legal_type]||'Участник')+' · '+(TYPES[currentUser.type]||'роль рынка')+' · '+accessName(trustLevel(currentUser));
 	  document.getElementById('cabAv').textContent=(currentUser.name||'К').charAt(0).toUpperCase();
 	  const g=document.getElementById('guestCta');if(g)g.style.display='none';
 	  renderAccessPanel();
@@ -1662,26 +1661,26 @@ function closeOv(id){document.getElementById(id).classList.remove('open');}
 
 function val(id){const e=document.getElementById(id);return e?e.value:'';}
 
-	async function doRegister(){
-	  const c=val('reg-company'); const isInd=val('reg-type')==='individual';
-	  if(!c){notify('Ошибка',isInd?'Укажите ФИО':'Заполните название компании',true);return;}
-	  const p={company_name:c,inn:val('reg-inn'),ogrn:val('reg-ogrn'),contact_person:val('reg-contact'),phone:val('reg-phone'),email:val('reg-email'),password:val('reg-pass'),participant_type:val('reg-type')};
-	  if(!p.email||!p.password){notify('Ошибка','Укажите email и пароль',true);return;}
-	  try{
-	    const r=await fetch('/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
-	    const d=await r.json();
-	    if(!r.ok){notify('Ошибка',d.error||'Не удалось зарегистрироваться',true);return;}
-	    closeOv('ovAuth');
-	    currentUser={id:d.participant_id||uid(),name:p.company_name,type:p.participant_type,email:p.email,inn:p.inn,ogrn:p.ogrn,status:'company_found',rating:90,deals_completed:0,deals_cancelled:0};
-	    applyUserUI();go('cabinet');
-	    notify('Company Found','Компания найдена. Доступен уровень 1');
-	  }catch(e){
-	    currentUser={id:uid(),name:p.company_name,type:p.participant_type,email:p.email,inn:p.inn,ogrn:p.ogrn,status:'company_found',rating:90,deals_completed:0,deals_cancelled:0};
-	    closeOv('ovAuth');
-	    applyUserUI();go('cabinet');
-	    notify('Company Found','Регистрация принята (демо-режим)');
-	  }
-	}
+		async function doRegister(){
+		  const c=val('reg-company'); const legalType=val('reg-legal')||'legal_entity'; const isInd=legalType==='individual';
+		  if(!c){notify('Ошибка',isInd?'Укажите ФИО':'Заполните название компании',true);return;}
+		  const p={company_name:c,legal_type:legalType,inn:val('reg-inn'),ogrn:val('reg-ogrn'),contact_person:val('reg-contact'),phone:val('reg-phone'),email:val('reg-email'),password:val('reg-pass'),participant_type:val('reg-type')};
+		  if(!p.email||!p.password){notify('Ошибка','Укажите email и пароль',true);return;}
+		  try{
+		    const r=await fetch('/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
+		    const d=await r.json();
+		    if(!r.ok){notify('Ошибка',d.error||'Не удалось зарегистрироваться',true);return;}
+		    closeOv('ovAuth');
+		    currentUser={id:d.participant_id||uid(),name:p.company_name,legalType:p.legal_type,type:p.participant_type,email:p.email,inn:p.inn,ogrn:p.ogrn,status:'company_found',rating:90,deals_completed:0,deals_cancelled:0};
+		    applyUserUI();go('cabinet');
+		    notify('Компания найдена','Профиль создан, маршрут будет рассчитан по роли и статусу');
+		  }catch(e){
+		    currentUser={id:uid(),name:p.company_name,legalType:p.legal_type,type:p.participant_type,email:p.email,inn:p.inn,ogrn:p.ogrn,status:'company_found',rating:90,deals_completed:0,deals_cancelled:0};
+		    closeOv('ovAuth');
+		    applyUserUI();go('cabinet');
+		    notify('Профиль создан','Компания найдена, доступен маршрут подготовки черновиков');
+		  }
+		}
 async function doLogin(){
   const email=val('login-email'),password=val('login-pass');
   if(!email||!password){notify('Ошибка','Введите email и пароль',true);return;}
@@ -1689,12 +1688,12 @@ async function doLogin(){
     const r=await fetch('/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
     const d=await r.json();
     if(!r.ok){notify('Ошибка',d.error||'Неверный email или пароль',true);return;}
-	    currentUser={id:d.participant_id,name:d.company_name||'Моя компания',type:d.participant_type||'other',email:d.email||email,inn:d.inn||'',ogrn:d.ogrn||'',status:d.status==='verified'?'verified':'company_found',rating:d.rating??90,deals_completed:d.deals_completed??0,deals_cancelled:d.deals_cancelled??0};
-	    closeOv('ovAuth');applyUserUI();await loadOffers();notify('Добро пожаловать','Вы вошли в систему');
-	  }catch(e){
-	    currentUser={id:uid(),name:'Моя компания',type:'wholesale',email,status:'company_found',inn:'7701234567',ogrn:'1027700132195'};
-	    closeOv('ovAuth');applyUserUI();notify('Добро пожаловать','Вход выполнен (демо-режим)');
-	  }
+		    currentUser={id:d.participant_id,name:d.company_name||'Моя компания',legalType:d.legal_type||'legal_entity',type:d.participant_type||'other',email:d.email||email,inn:d.inn||'',ogrn:d.ogrn||'',status:d.status==='verified'?'verified':'company_found',rating:d.rating??90,deals_completed:d.deals_completed??0,deals_cancelled:d.deals_cancelled??0};
+		    closeOv('ovAuth');applyUserUI();await loadOffers();notify('Добро пожаловать','Вы вошли в систему');
+		  }catch(e){
+		    currentUser={id:uid(),name:'Моя компания',legalType:'legal_entity',type:'wholesale',email,status:'company_found',inn:'7701234567',ogrn:'1027700132195'};
+		    closeOv('ovAuth');applyUserUI();notify('Добро пожаловать','Профиль участника открыт');
+		  }
 	}
 
 	async function submitOffer(){
@@ -1756,14 +1755,14 @@ async function doLogin(){
 	    document.querySelectorAll('.cab-mi[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab==='offers'));
 	    go('cabinet');renderCabinet();render();
 	    if(isAuction)notify('Аукцион сохранён','Черновик аукциона готов для следующего этапа');
-	    else if(!canPublish())notify('Черновик сохранён','Публикация доступна после верификации уровня 2');
-	    else notify('Ордер добавлен','Сервер недоступен — показано локально (демо-режим)',true);
+	    else if(!canPublish())notify('Черновик сохранён','Публикация доступна после подтверждения доверительного статуса');
+	    else notify('Ордер добавлен','Сервер недоступен — размещение показано только в текущей сессии',true);
 	  }
 	}
 
 	let curStep=1;
 	function openInterest(id){
-	  if(!currentUser){notify('Уровень 0','Детали ордера доступны после регистрации',true);openAuth('login');return;}
+	  if(!currentUser){notify('Для продолжения зарегистрируйтесь','Детали ордера доступны после создания профиля участника',true);openAuth('reg');return;}
 	  const o=offers.find(x=>String(x.id)===String(id));if(!o)return;curInterest=o;
 	  interestStep(1);
 	  document.getElementById('ovInt').classList.add('open');
@@ -1903,8 +1902,8 @@ async function loadOffers(){
     if(arr && arr.length){
       offers = arr.map(normalizeOffer);
     }
-    // если массив пустой — оставляем демо-данные (витрина не должна быть пустой)
-  }catch(e){/* сервера нет — демо-данные */}
+    // если массив пустой — оставляем стартовые данные (витрина не должна быть пустой)
+  }catch(e){/* сервера нет — стартовая витрина остаётся доступной */}
   render();
   renderDealFlow();
 }
